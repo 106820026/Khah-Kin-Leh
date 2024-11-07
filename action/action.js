@@ -12,16 +12,6 @@ var ivy = `%c
 console.log(ivy, 'color:White; background-color:Black;')
 
 // 切換tab
-$("#comment_tab").on("click", function() {
-    openTab("comment")
-    chrome.storage.local.set({"tab": "comment" }).then(() => {
-    })
-})
-$("#regression_tab").on("click", function() {
-    openTab("regression")
-    chrome.storage.local.set({"tab": "regression" }).then(() => {
-    })
-})
 $("#file_naming_tab").on("click", function() {
     openTab("file_naming")
     chrome.storage.local.set({"tab": "file_naming" }).then(() => {
@@ -68,7 +58,7 @@ chrome.storage.local.get("tab").then((result) => {
     if(result["tab"] != null){
         openTab(result["tab"])
     }else{
-        openTab("comment")
+        openTab("profile")
     }
 })
 
@@ -76,199 +66,6 @@ chrome.storage.local.get("tab").then((result) => {
 $('a.report').on('click', function(){
     chrome.tabs.create({url: $(this).attr('href')})
     return false
-})
-
-/////////////////////
-// Regression Page //
-/////////////////////
-
-// 選擇bug時反白 點兩下開啟
-function select_bug_listener() {
-    $("td > p").unbind();
-    $("td > p").on("click", (evt) => {
-        $("td > p.bug.focus").removeClass("focus")
-        $(evt.target).addClass("focus")
-    })
-    $("td > p").on("dblclick", (evt) => {
-        window.open("https://dev.activision.com/jira/browse/" + $(evt.target).text())
-    })
-}
-// 將目前regression結果儲存至DB
-function save_regression_to_DB() {
-    chrome.storage.local.set({"regression":  
-    {
-        "html": $("table>tbody").html(),
-        "row": row,
-        "vf": vf,
-        "vo": vo,
-        "cnvr": cnvr,
-        "current_bugs": current_bugs.toString()
-    }
-    }).then(() => {
-        console.log("Regression data is updated to local storage")
-    })
-}
-// 初始化所有Regression資料
-let row = 1, vf = vo = cnvr = 0
-let current_bugs = []
-chrome.storage.local.get("regression").then((result) => {
-    if(result["regression"] == undefined){
-        $("table>tbody").append("<tr><td></td><td></td><td></td></tr>")
-    }else{
-        $("table>tbody").append(result["regression"]["html"])
-        select_bug_listener()
-        row = result["regression"]["row"]
-        vf = result["regression"]["vf"]
-        vo = result["regression"]["vo"]
-        cnvr = result["regression"]["cnvr"]
-        current_bugs = result["regression"]["current_bugs"].split(",")
-    }
-})
-// 按下VF VO CNV/CNR按鈕
-$("#add_VF").on("click", () => {
-    chrome.runtime.sendMessage({type: "get_bug_data"}, function(bug_data) {
-        if(bug_data == null){
-            console.log("Cannot get bug data from service_worker.js")
-        }else{
-            bug_id = bug_data.bug_id
-            if(current_bugs.includes(bug_id)){
-                alert("Duplicate bug in the list")
-            }else{
-                if(vf >= row) {
-                    $("#regression_tbody").append("<tr><td></td><td></td><td></td></tr>")
-                    row++
-                }
-                $("#regression_tbody").children().eq(vf).children().eq(0).append("<p class=\"bug\" id=\"" + vf + "-0\" target= \"_blank\">" + bug_id + "</p>")
-                vf++
-                current_bugs.push(bug_id)
-                select_bug_listener()
-                save_regression_to_DB()
-            }
-        }
-    })
-})
-$("#add_VO").on("click", () => {
-    chrome.runtime.sendMessage({type: "get_bug_data"}, function(bug_data) {
-        if(bug_data == null){
-            console.log("Cannot get bug data from service_worker.js")
-        }else{
-            bug_id = bug_data.bug_id
-            if(current_bugs.includes(bug_id)){
-                alert("Duplicate bug in the list")
-            }else{
-                if(vo >= row) {
-                    $("#regression_tbody").append("<tr><td></td><td></td><td></td></tr>")
-                    row++
-                }
-                $("#regression_tbody").children().eq(vo).children().eq(1).append("<p class=\"bug\" id=\"" + vo + "-1\" target= \"_blank\">" + bug_id + "</p>")
-                vo++
-                current_bugs.push(bug_id)
-                select_bug_listener()
-                save_regression_to_DB()
-            }
-        }
-    })
-})
-$("#add_CNVR").on("click", () => {
-    chrome.runtime.sendMessage({type: "get_bug_data"}, function(bug_data) {
-        if(bug_data == null){
-            console.log("Cannot get bug data from service_worker.js")
-        }else{
-            bug_id = bug_data.bug_id
-            if(current_bugs.includes(bug_id)){
-                alert("Duplicate bug in the list")
-            }else{
-                if(cnvr >= row) {
-                    $("#regression_tbody").append("<tr><td></td><td></td><td></td></tr>")
-                    row++
-                }
-                $("#regression_tbody").children().eq(cnvr).children().eq(2).append("<p class=\"bug\" id=\"" + cnvr + "-2\" target= \"_blank\">" + bug_id + "</p>")
-                cnvr++
-                current_bugs.push(bug_id)
-                select_bug_listener()
-                save_regression_to_DB()
-            }
-        }
-    })
-})
-// 依照bug的座標位置移除(選擇要刪除的bug 再按按鈕) 然後還要上傳DB
-$("#remove_bug").on("click", () => {
-    let target = $("td > p.bug.focus")
-    let no = parseInt(target.attr("id").split("-")[0])
-    let index = parseInt(target.attr("id").split("-")[1])
-    let bug_status = [vf, vo, cnvr]
-    current_bugs.splice(current_bugs.indexOf(target.text()), 1) // 從current_bugs中移除bug_id
-    if(target.length > 0){
-        // 一直把下面的往上遞補 直到沒有
-        while($("#" + no + "-" + index).length != 0){
-            // 把目前的刪掉 然後把下面的移上去
-            tableCol = $("#" + no + "-" + index).parent()
-            tableCol.empty()
-            if($("#" + (no + 1) + "-" + index).length != 0){
-                tableCol.append($("#" + (no + 1) + "-" + index).parent().html())
-                tableCol.children().attr("id", no + "-" + index)
-                no++
-            }
-        }
-        // 檢查要不要把row-1(檢查column數最大且只有一個最大值)
-        if(Math.max(...bug_status) == bug_status[index] && bug_status.filter(x => x == bug_status[index]).length == 1){
-            $("#regression_tbody").children().eq(bug_status[index] - 1).remove()
-            row--
-        }
-        select_bug_listener()
-        // 把該數量-1
-        switch(index) {
-            case 0: vf--; break;
-            case 1: vo--; break;
-            case 2: cnvr--; break;
-        }
-        //上傳DB
-        save_regression_to_DB()
-    }
-})
-// 複製regression結果到剪貼簿
-$("#copy_regression").on("click", () => {
-    let result = ""
-    for(i = 0; i < row; i++) {
-        for(j = 0; j < 3; j++){
-            result += $("#regression_tbody").children().eq(i).children().eq(j).text()
-            if(j < 2){
-                result += "\t"
-            }
-        }
-        if(i < row - 1) {
-            result += "\n"
-        }
-    }
-    navigator.clipboard.writeText(result).val().then(() => {
-        console.log('Async: Copying to clipboard was successful!');
-    }, function(err) {
-        alert('Async: Could not copy text: ', err);
-    })
-})
-// 清除regression table的所有東西
-$("#clear_regression").on("click", () => {
-    if(current_bugs.length > 0){
-        if(confirm("Are you sure to clear table?") == true){
-            current_bugs = []
-            row = 1
-            vf = vo = cnvr = 0
-            $("#regression_tbody").empty()
-            $("#regression_tbody").append("<tr><td></td><td></td><td></td></tr>")
-            chrome.storage.local.set({"regression":  
-                {
-                    "html": "<tr><td></td><td></td><td></td></tr>",
-                    "row": 1,
-                    "vf": 0,
-                    "vo": 0,
-                    "cnvr": 0,
-                    "current_bugs": ""
-                }
-            }).then(() => {
-                console.log("Regression table initialized and updated to local storage.")
-            })
-        }
-    }
 })
 
 //////////////////////
@@ -444,8 +241,8 @@ $("#found_cl").change(() => {
     chrome.storage.local.set({"found_cl": $("#found_cl").val()})
 })
 
-let jira_labels = ""
-let num_lock = false
+let jira_labels = "Loc_S" + $("#season_num").val() + " " // 預設把season label加上去
+let num_lock = true
 
 // 蒐集選擇的labels
 $(".add_label").on("click", (event) => {
@@ -474,14 +271,16 @@ $("button.advanced_type").on('click', function() {
     }
 })
 // 清除所有input並更新至local storage
-function clear_input() {
+function clear_input(preserve_text = false) {
     $(".add_label").css("background-color", "buttonface")
     $(".specific_label").hide()
-    $("#summary").val("")
-    $("#found_cl").val("")
     jira_labels = ""
-    chrome.storage.local.set({"found_cl": $("#found_cl").val()})
-    chrome.storage.local.set({"summary": $("#summary").val()})
+    if(!preserve_text) {
+        $("#summary").val("")
+        $("#found_cl").val("")
+        chrome.storage.local.set({"summary": $("#summary").val()})
+        chrome.storage.local.set({"found_cl": $("#found_cl").val()})
+    }
     
 }
 $("#clear_input").on("click", () => {
@@ -493,7 +292,7 @@ $("#copy_labels").on("click", ()=> {
     // 確認基本資料有填寫
     if(email == ""){
         alert("Please Enter the Email Address in Profile Tab and Check if the Language is Correct!")
-        // return
+        return
     }
     let area = "", level_query = "&customfield_10306=30237", priority_query = "&priority=11103"
     if(jira_labels.includes("Loc_SP")){
@@ -555,11 +354,11 @@ $("#copy_labels").on("click", ()=> {
     })
     // 移除影響query string的符號
     let summary_detail = $("#summary").val().replace("&", "%26").replace("=", "%3D")
-    let issue_type_1 = $(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text().replace("Loc_", "")
-    let issue_type_2 = $(".issue_type_2[style='background-color: rgb(172, 172, 172);']").text().replace($(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text() + "_", "")
+    let issue_type_1 = $(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text().replace("Loc_", "").toUpperCase()
+    let issue_type_2 = $(".issue_type_2[style='background-color: rgb(172, 172, 172);']").text().replace($(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text() + "_", "").toUpperCase()
     let summary = "LOC%3A%20CER%20%E2%80%93%20PS4%2FPS5%2FX1%2FXSX%2FPC%20%E2%80%93%20" + LNG + "%20%E2%80%93%20" + issue_type_1 + 
                   "%20%E2%80%93%20" + issue_type_2 + "%20%E2%80%93%20" + area + "%2FLocation" + "%20%E2%80%93%20" + summary_detail
-    if(jira_labels.includes("Telescope")) {summary = summary + "[Telescope]"}
+    if(jira_labels.includes("Telescope")) {summary = summary + " [Telescope]"}
     let description = 
     "REPRO STEPS%0A" +
     "----%0A" +
@@ -585,7 +384,7 @@ $("#copy_labels").on("click", ()=> {
 
     // 使用Query String在新分頁開啟Log Bug頁
     chrome.tabs.create({url: query_string_url})
-    clear_input()
+    clear_input(true)
     return false
 })
 

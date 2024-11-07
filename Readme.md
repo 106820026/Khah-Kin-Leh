@@ -8,7 +8,8 @@
 3. New Bug tab can generate a jira query string to create new bug
 4. Add profile tab which can let user input their language and jira username
 5. Remove fontawesome to reduce extension size
-# 2024-11-05
+6. Remove Regression Tab
+# 2024-11-05 🎂
 1. Remove comment tab
 2. Change Translation contrast highlight color to Light/Dark Green
 3. Fix label typo and incorrect issue type

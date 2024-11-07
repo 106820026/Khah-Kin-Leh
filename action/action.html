@@ -5,7 +5,6 @@
     </head>
     <body>
         <div class="tab">
-            <button id="regression_tab" class="tablinks">Regression</button>
             <button id="file_naming_tab" class="tablinks">File Naming</button>
             <button id="xloc_tab" class="tablinks">Xloc</button>
             <button id="new_bug_tab" class="tablinks">New Bug</button>
@@ -13,23 +12,6 @@
         </div>
         
         <!-- Tab content -->
-        <div id="regression" class="tabcontent">
-            <p id="current_bug"></p>
-            <div class="regression_button">
-                <button id="add_VF">VF</button>
-                <button id="add_VO">VO</button>
-                <button id="add_CNVR">CNV / CNR</button>
-            </div>
-            <table id="regression_table">
-                <tbody id="regression_tbody"></tbody>
-            </table>
-            <div class="regression_button">
-                <button id="remove_bug" title="Remove Selected Bug">Erase</button>
-                <button id="copy_regression" title="Copy All">Copy</button>
-                <button id="clear_regression" title="Clear All">Clear</button>
-            </div>
-        </div>
-        
         <div id="file_naming" class="tabcontent">
             <label for="bug_id">Bug Number:</label>
             <input type="text" id="bug_id" placeholder="Bug ID" value="" disabled/>
@@ -70,8 +52,8 @@
             <label for="summary">Summary:</label><input id="summary" type="text">
             <div class="labels">
                 <input type="text" id="found_cl" placeholder="Found CL" style="width: 30%;">
-                <button class="add_label">Season</button>
-                <input id="season_num" type="number" min="1" value="1" step=".5">
+                <button class="add_label" style="background-color: rgb(172, 172, 172);">Season</button>
+                <input id="season_num" type="number" min="1" value="1" step=".5" disabled>
                 <p>Game Mode</p>
                 <button class="add_label">Loc_SP</button> <button class="add_label">Loc_MP</button> <button class="add_label">Loc_ZM</button> <button class="add_label">Loc_WZ</button>
                 <p>General</p>

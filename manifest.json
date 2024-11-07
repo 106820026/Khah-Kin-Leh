@@ -19,7 +19,7 @@
                 "https://dev.activision.com/jira/browse/*",
                 "https://xloc.activision.ie/*"
             ],
-            "run_at": "document_end"
+            "run_at": "document_start"
         }
     ],
     "background": {
