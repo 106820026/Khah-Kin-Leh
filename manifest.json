@@ -1,0 +1,38 @@
+{
+    "manifest_version": 3,
+    "name": "Khah Kin Leh",
+    "version": "0.0",
+    "description": "Help you speed up regression",
+    "permissions": [
+        "contextMenus",
+        "clipboardWrite",
+        "storage",
+        "tabs",
+        "activeTab",
+        "scripting"
+    ],
+    "content_scripts": [
+        {
+            "js": ["scripts/content.js"],
+            "matches": [
+                "https://dev.activision.com/jira/issues/*",
+                "https://dev.activision.com/jira/browse/*",
+                "https://xloc.activision.ie/*"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "background": {
+        "service_worker": "service_worker.js"
+    },
+    "icons": {
+        "16": "./images/icon-16.png",
+        "32": "./images/icon-32.png",
+        "64": "./images/icon-64.png",
+        "128": "./images/icon-128.png"
+    },
+    "action": {
+        "default_popup": "./action/action.html",
+        "default_icon": "./images/icon-128.png"
+    }
+}

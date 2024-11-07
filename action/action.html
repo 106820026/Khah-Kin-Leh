@@ -1,0 +1,149 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="action.css">
+        <script src="jquery-3.7.1.slim.min.js"></script>
+    </head>
+    <body>
+        <div class="tab">
+            <button id="regression_tab" class="tablinks">Regression</button>
+            <button id="file_naming_tab" class="tablinks">File Naming</button>
+            <button id="xloc_tab" class="tablinks">Xloc</button>
+            <button id="new_bug_tab" class="tablinks">New Bug</button>
+            <button id="profile_tab" class="tablinks">Profile</button>
+        </div>
+        
+        <!-- Tab content -->
+        <div id="regression" class="tabcontent">
+            <p id="current_bug"></p>
+            <div class="regression_button">
+                <button id="add_VF">VF</button>
+                <button id="add_VO">VO</button>
+                <button id="add_CNVR">CNV / CNR</button>
+            </div>
+            <table id="regression_table">
+                <tbody id="regression_tbody"></tbody>
+            </table>
+            <div class="regression_button">
+                <button id="remove_bug" title="Remove Selected Bug">Erase</button>
+                <button id="copy_regression" title="Copy All">Copy</button>
+                <button id="clear_regression" title="Clear All">Clear</button>
+            </div>
+        </div>
+        
+        <div id="file_naming" class="tabcontent">
+            <label for="bug_id">Bug Number:</label>
+            <input type="text" id="bug_id" placeholder="Bug ID" value="" disabled/>
+            <label for="bug_type_1">Bug Type 1:</label>
+            <input type="text" id="bug_type_1" placeholder="Bug Type 1" value="" disabled/>
+            <label for="bug_type_2">Bug Type 2:</label>
+            <input type="text" id="bug_type_2" placeholder="Bug Type 2" value="" disabled/>
+            <label for="bug_lng_select">Language:</label>
+            <select id="bug_lng_select"></select><br>
+            <label for="release_id">Release ID:</label>
+            <input type="text" id="release_id" placeholder="Release ID" value=""/>
+            <label for="file_name">File Name:</label>
+            <div class="copy_comment">
+                <textarea id="file_name" rows="3"></textarea>
+                <button id="file_name_copy" title="Copy">copy</button>
+            </div>
+            <div class="file_naming_button">
+                <button class="add_postfix" id="plus_1">_1</button>
+                <button class="add_postfix" id="plus_2">_2</button>
+                <button class="add_postfix" id="plus_3">_3</button>
+                <button class="add_postfix" id="plus_4">_4</button>
+                <button class="add_postfix" id="plus_5">_5</button>
+                <button class="add_postfix" id="plus_6">_6</button>
+                <button class="add_postfix" id="plus_7">_7</button>
+                <button class="add_postfix" id="plus_8">_8</button>
+            </div>
+        </div>
+
+        <div id="xloc" class="tabcontent">
+            <button id="translation_contrast">Translation Contrast</button><Br>
+            <button id="toggle_highlight">Toggle Highlight</button>
+            <button id="clear_search">Clear Search</button>
+            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="1"></textarea>
+            <p id="colored_string"></p>            
+        </div>
+
+        <div id="new_bug" class="tabcontent">
+            <label for="summary">Summary:</label><input id="summary" type="text">
+            <div class="labels">
+                <input type="text" id="found_cl" placeholder="Found CL" style="width: 30%;">
+                <button class="add_label">Season</button>
+                <input id="season_num" type="number" min="1" value="1" step=".5">
+                <p>Game Mode</p>
+                <button class="add_label">Loc_SP</button> <button class="add_label">Loc_MP</button> <button class="add_label">Loc_ZM</button> <button class="add_label">Loc_WZ</button>
+                <p>General</p>
+                <button class="add_label issue_type_1 advanced_type">Loc_Text</button> <button class="add_label issue_type_1 advanced_type">Loc_Subtitle</button> <button class="add_label issue_type_1 advanced_type">Loc_Audio</button>
+                <button class="add_label">Loc_UI</button> <button class="add_label">Loc_TRG</button> <button class="add_label">Loc_Glossary</button> <button class="add_label advanced_type">Loc_Telescope</button>
+                <p>Safety Issue</p>
+                <button class="add_label">Loc_Arabic_Safe</button> <button class="add_label">Loc_German_Safe</button> <button class="add_label">Loc_Japanese_Safe</button>
+                <div class="text_specific" style="display: none;">
+                    <p>Issue Type(Text)</p>
+                    <button class="add_label issue_type_2">Loc_Text_Amendment</button> <button class="add_label issue_type_2">Loc_Text_Overlap</button>
+                    <button class="add_label issue_type_2">Loc_Text_Consistency</button> <button class="add_label issue_type_2">Loc_Text_Context</button>
+                    <button class="add_label issue_type_2">Loc_Text_Truncation</button> <button class="add_label issue_type_2">Loc_Text_Font_Size</button>
+                    <button class="add_label issue_type_2">Loc_Text_Alignment</button> <button class="add_label issue_type_2">Loc_Text_Graphic</button>
+                    <button class="add_label issue_type_2">Loc_Text_Not_Translated</button> <button class="add_label issue_type_2">Loc_Text_Integration</button>
+                    <button class="add_label issue_type_2">Loc_Text_Spelling_Grammer</button> <button class="add_label issue_type_2">Loc_Text_Missing</button>
+                </div>
+                <div class="subtitle_specific" style="display: none;">
+                    <p>Issue Type(Subtitle)</p>
+                    <button class="add_label issue_type_2">Loc_Subtitle_Amendment</button> <button class="add_label issue_type_2">Loc_Subtitle_Overlap</button>
+                    <button class="add_label issue_type_2">Loc_Subtitle_Consistency</button> <button class="add_label issue_type_2">Loc_Subtitle_Context</button>
+                    <button class="add_label issue_type_2">Loc_Subtitle_Truncation</button> <button class="add_label issue_type_2">Loc_Subtitle_Font_Size</button>
+                    <button class="add_label issue_type_2">Loc_Subtitle_Alignment</button> <button class="add_label issue_type_2">Loc_Subtitle_Mismatch</button>
+                    <button class="add_label issue_type_2">Loc_Subtitle_Integration</button> <button class="add_label issue_type_2">Loc_Subtitle_Missing</button>
+                    <button class="add_label issue_type_2">Loc_Subtitle_Not_Translated</button> <button class="add_label issue_type_2">Loc_Subtitle_Spelling_Grammar</button>
+                </div>
+                <div class="audio_specific" style="display: none;">
+                    <p>Issue Type(Audio)</p>
+                    <button class="add_label issue_type_2">Loc_Audio_Consistency</button> <button class="add_label issue_type_2">Loc_Audio_Context</button>
+                    <button class="add_label issue_type_2">Loc_Audio_Cut</button> <button class="add_label issue_type_2">Loc_Audio_Missing</button>
+                    <button class="add_label issue_type_2">Loc_Audio_Not_Translated</button> <button class="add_label issue_type_2">Loc_Audio_Overlap</button>
+                    <button class="add_label issue_type_2">Loc_Audio_SFX</button> <button class="add_label issue_type_2">Loc_Audio_Volume</button>
+                    <button class="add_label issue_type_2">Loc_Audio_Text_Integration</button> <button class="add_label issue_type_2">Loc_Audio_Sync</button>
+                </div>
+                <div class="telescope_specific" style="display: none;">
+                    <p>Issue Type(Telescope)</p>
+                    <button class="add_label">Loc_Telescope</button> <button class="add_label">Telescope</button> <button class="add_label">telescope</button>
+                    <button class="add_label">CER<span style="color: DarkOrange;">MP</span>LB</button> <button class="add_label">CER<span style="color: DarkOrange;">ZM</span>LB</button> 
+                    <button class="add_label">CERResurgLB</button><button class="add_label">CEREntryTEL</button> <button class="add_label">CEREntryS1</button> <button class="add_label">CERMOTD</button>
+                    <button class="add_label">CEREULA</button>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: center; margin-top: 8px;">
+                <button id="clear_input"><span style="color: red;">CLEAR</span> All</button>&emsp;<button id="copy_labels">Create Bug</button>
+            </div>
+        </div>
+
+        <div id="profile" class="tabcontent">
+            <label for="profile_lng">Loc Language</label>
+            <select id="profile_lng">
+                <option id="FR" value="FR">French</option>
+                <option id="IT" value="IT">Italian</option>
+                <option id="DE" value="DE">German</option>
+                <option id="ES" value="ES">Spanish</option>
+                <option id="RU" value="RU">Russian</option>
+                <option id="PL" value="PL">Polish</option>
+                <option id="AR" value="AR">Arabic</option>
+                <option id="PTBR" value="PTBR">Portuguess Brazilian</option>
+                <option id="MX" value="MX">Latin Spanish</option>
+                <option id="KO" value="KO">Korean</option>
+                <option id="ZHS" value="ZHS">Simplified Chinese</option>
+                <option id="ZHT" value="ZHT">Traditional Chinese</option>
+                <option id="JA" value="JA">Japanese</option>
+            </select><br>
+            <span for="profile_username">Jira Username</span>
+            <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="width: 70%;">
+            <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a>
+        </div>
+
+        <footer style="display: flex; justify-content: space-between;">
+            <a class="report" href="slack://user?team=EHLH96WBS&id=U059YCTGU11" target="_blank">Report Error</a>
+            <p>Version 0.0</p>
+        </footer>
+        <script src="action.js"></script>
+    </body>
+</html>
