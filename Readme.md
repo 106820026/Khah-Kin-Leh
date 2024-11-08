@@ -2,6 +2,9 @@
 >
 >**We are currently in Beta Test**
 
+# 2024-11-08
+1. Fix bug (Seasonal label is always Loc_S1)
+2. Edit action required section in New Bug tab
 # 2024-11-07
 1. Rename **Label** tab to **New Bug** tab
 2. Add safety issue label in New Bug tab

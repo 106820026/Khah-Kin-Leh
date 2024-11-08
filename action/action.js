@@ -204,10 +204,12 @@ $('#xloc textarea').on('input', (event) => {
     $(event.target).css("height", (event.target.scrollHeight) + "px")
 })
 
-////////////////
-// Labels Tab //
-////////////////
+/////////////////
+// New Bug Tab //
+/////////////////
 
+let jira_labels = ""
+let num_lock = true
 // 從localstorage讀Summary資料
 chrome.storage.local.get("summary").then((result) => {
     if(result["summary"] != undefined){
@@ -225,6 +227,8 @@ chrome.storage.local.get("season_num").then((result) => {
     }else{
         $("#season_num").val("1")
     }
+    jira_labels = "Loc_S" + $("#season_num").val() + " " // 預設把season label加上去
+    $("#season_num").prop('disabled', num_lock)
 })
 // 當season有修改時 上傳localstorage
 $("#season_num").change(() => {
@@ -240,10 +244,6 @@ chrome.storage.local.get("found_cl").then((result) => {
 $("#found_cl").change(() => {
     chrome.storage.local.set({"found_cl": $("#found_cl").val()})
 })
-
-let jira_labels = "Loc_S" + $("#season_num").val() + " " // 預設把season label加上去
-let num_lock = true
-
 // 蒐集選擇的labels
 $(".add_label").on("click", (event) => {
     let _label = $(event.target).text() + " " // tag需要加空格避免和其他tag打架
@@ -287,7 +287,7 @@ $("#clear_input").on("click", () => {
     clear_input()
 })
 // 開啟new bug頁
-$("#copy_labels").on("click", ()=> {
+$("#create_bug").on("click", ()=> {
     let email = $("#profile_username").val(), LNG = $("#profile_lng option:selected").val()
     // 確認基本資料有填寫
     if(email == ""){
@@ -371,7 +371,7 @@ $("#copy_labels").on("click", ()=> {
     "Please check the screenshot attached for further details.%0A%0A" +
     "ACTION REQUIRED%0A" +
     "----%0A" +
-    "Please investigate and fix it. Thanks!%0A%0A" +
+    "Please%20modify%20translations%20as%20suggested%20in%20the%20Excel.%20Thanks!%0A%0A" +
     "RESOURCE%20ID%0A" +
     "----%0A%5C%5C%20" +
     "keywords%3A"
