@@ -2,6 +2,10 @@
 >
 >**We are currently in Beta Test**
 
+# 2024-11-10
+1. Implement different action required base on issue type
+2. Safety issus now be consider as issue type 2, and if safety issue and other issue are selected at the same time, the issue type 2 will be the safety issue(higher priority)
+3. File name in File Naming tab will default select your Loc Language(if applicable)
 # 2024-11-08
 1. Fix bug (Seasonal label is always Loc_S1)
 2. Edit action required section in New Bug tab

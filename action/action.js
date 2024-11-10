@@ -87,10 +87,12 @@ chrome.runtime.sendMessage({type: "read_bug_data", value: true}, function(){
             for(language of bug_data.language.split("/")){
                 if(!full_name_lang.includes(language)){
                     for(al of language.split("")){
-                        $("#bug_lng_select").append("<option value=\"" + abbreviate_lang[al] + "\">" + abbreviate_lang[al] + "</option>")
+                        let selection = abbreviate_lang[al] == $("#profile_lng option:selected").val() ? "selected" : ""
+                        $("#bug_lng_select").append("<option value=\"" + abbreviate_lang[al] + "\" " + selection + ">" + abbreviate_lang[al] + "</option>")
                     }
                 }else{
-                    $("#bug_lng_select").append("<option value=\"" + language + "\">" + language + "</option>")
+                    let selection = language == $("#profile_lng option:selected").val() ? "selected" : ""
+                    $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
                 }
             }
             $("#release_id").val(bug_data.release_id)
@@ -314,7 +316,7 @@ $("#create_bug").on("click", ()=> {
     let high_priority_issue = [
         "Overlap", "Consisency", "Context", "Truncation", "Not_Translated", "Missing", "Mismatch", "Audio_Cut", "SFX", "Sync", "Glossary", "Safe"
     ]
-    if(high_priority_issue.some(v => jira_labels.includes(v))){
+    if(high_priority_issue.some(issue => jira_labels.includes(issue))){
         priority_query = "&priority=11102"
     }
     let label_query = "&labels=Loc&labels=Loc_Cerberus&labels=Loc_" + LNG + (jira_labels.length > 0 ? jira_labels.trim().split(" ").map(label => "&labels=" + label).join("") : "")
@@ -356,9 +358,20 @@ $("#create_bug").on("click", ()=> {
     let summary_detail = $("#summary").val().replace("&", "%26").replace("=", "%3D")
     let issue_type_1 = $(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text().replace("Loc_", "").toUpperCase()
     let issue_type_2 = $(".issue_type_2[style='background-color: rgb(172, 172, 172);']").text().replace($(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text() + "_", "").toUpperCase()
+                       
+    let high_priority_type_2 = ["Loc_Arabic_Safe", "Loc_German_Safe", "Loc_Japanese_Safe"]
+    high_priority_type_2.forEach(type => {
+        if(jira_labels.includes(type)){
+            issue_type_2 = type.replace("Loc_", "").replace("_", " ")
+        }
+    })
     let summary = "LOC%3A%20CER%20%E2%80%93%20PS4%2FPS5%2FX1%2FXSX%2FPC%20%E2%80%93%20" + LNG + "%20%E2%80%93%20" + issue_type_1 + 
                   "%20%E2%80%93%20" + issue_type_2 + "%20%E2%80%93%20" + area + "%2FLocation" + "%20%E2%80%93%20" + summary_detail
     if(jira_labels.includes("Telescope")) {summary = summary + " [Telescope]"}
+    let amend_in_xloc_type = ["Amendment", "Consistency", "Context", "Not_Translated", "Spelling_Grammar"]
+    let action_required = amend_in_xloc_type.some(type => jira_labels.includes(type)) ?
+                          "Please%20modify%20the%20translations%20as%20suggested%20in%20the%20Excel." : 
+                          "Please%20investigate%20and%20fix%20it."
     let description = 
     "REPRO STEPS%0A" +
     "----%0A" +
@@ -371,7 +384,7 @@ $("#create_bug").on("click", ()=> {
     "Please check the screenshot attached for further details.%0A%0A" +
     "ACTION REQUIRED%0A" +
     "----%0A" +
-    "Please%20modify%20translations%20as%20suggested%20in%20the%20Excel.%20Thanks!%0A%0A" +
+    action_required + "%20Thanks!%0A%0A" +
     "RESOURCE%20ID%0A" +
     "----%0A%5C%5C%20" +
     "keywords%3A"
