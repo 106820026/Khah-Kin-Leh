@@ -2,6 +2,8 @@
 >
 >**We are currently in Beta Test**
 
+Copyright&copy; 2024, Ivy Ho
+
 # 2024-11-08
 1. Fix bug (Seasonal label is always Loc_S1)
 2. Edit action required section in New Bug tab
