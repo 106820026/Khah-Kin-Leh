@@ -290,10 +290,10 @@ $("#clear_input").on("click", () => {
 })
 // 開啟new bug頁
 $("#create_bug").on("click", ()=> {
-    let email = $("#profile_username").val(), LNG = $("#profile_lng option:selected").val()
+    let username = $("#profile_username").val(), LNG = $("#profile_lng option:selected").val()
     // 確認基本資料有填寫
-    if(email == ""){
-        alert("Please Enter the Email Address in Profile Tab and Check if the Language is Correct!")
+    if(username == ""){
+        alert("Please Enter the username in Profile Tab and Check if the Language is Correct!")
         return
     }
     let area = "", level_query = "&customfield_10306=30237", priority_query = "&priority=11103"
@@ -391,8 +391,8 @@ $("#create_bug").on("click", ()=> {
 
     let query_string_url = 
     "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&customfield_10325=10443&customfield_10319=10416" +
-    "&customfield_10900=12800&reporter=" + email + "&customfield_10362=11096" + "&summary=" + summary + "&description=" + description +
-    "&assignee=" + email + "&customfield_10307=" + $("#found_cl").val() + priority_query + label_query + level_query + "&reporter=" + email +
+    "&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + "&description=" + description +
+    "&assignee=" + username + "&customfield_10307=" + $("#found_cl").val() + priority_query + label_query + level_query + "&reporter=" + username +
     atvi_type_query + loc_lng_query + loc_type_query
 
     // 使用Query String在新分頁開啟Log Bug頁
