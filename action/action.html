@@ -49,11 +49,15 @@
         </div>
 
         <div id="new_bug" class="tabcontent">
-            <label for="summary">Summary:</label><input id="summary" type="text">
+            <label for="summary">Summary:</label><input id="summary" type="text" autocomplete="off">
             <div class="labels">
                 <input type="text" id="found_cl" placeholder="Found CL" style="width: 30%;">
                 <button class="add_label" style="background-color: rgb(172, 172, 172);">Season</button>
                 <input id="season_num" type="number" min="1" value="1" step=".5">
+                <label style="display: inline-flex; align-items: center;"> 
+                    <input id="multi_lng" type="checkbox" style="flex: none;"> 
+                    Multi-LNG
+                </label>
                 <p>Game Mode</p>
                 <button class="add_label">Loc_SP</button> <button class="add_label">Loc_MP</button> <button class="add_label">Loc_ZM</button> <button class="add_label">Loc_WZ</button>
                 <p>General</p>

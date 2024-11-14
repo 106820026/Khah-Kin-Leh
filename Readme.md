@@ -4,6 +4,10 @@
 
 Copyright&copy; 2024, Ivy Ho
 
+# 2024-11-14
+1. Add multilanguage check box and corresponding features
+2. Remove summary input history
+3. Add color code and icon
 # 2024-11-11
 1. Fix type (email -> username)
 # 2024-11-10
