@@ -230,6 +230,8 @@ function convert_to_colored_string() {
     if(color_codes.some(color_code => color_code_string.includes(color_code))) {
         color_code_string = color_code_string.replaceAll("\\n", "<br>") // 換行符號改成html使用的
         color_code_string = color_code_string.replaceAll("[{ui_font_bullet_point}]", "<span style=\"font-size: 30px\">&#8226;</span>") // 換行符號改成html使用的
+        color_code_string = color_code_string.replaceAll("[{ui_codpoints}]", "&#x1FA99;") // coin
+        color_code_string = color_code_string.replaceAll("[{ui_lock}]", "&#128274;") // lock
         color_codes.map(function(element) { // 把color code逐一檢查
             if(color_code_string.includes(element)) {
                 color_code_string = color_code_string.replaceAll(element, "</span><span style=\"color: " + color_dict[element] + "\">")
@@ -368,7 +370,8 @@ $("#clear_input").on("click", () => {
 })
 // 開啟new bug頁
 $("#create_bug").on("click", ()=> {
-    let username = $("#profile_username").val(), LNG = $("#profile_lng option:selected").val()
+    let username = $("#profile_username").val()
+    let LNG = $("#multi_lng").is(":checked") ? "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA" : $("#profile_lng option:selected").val()
     // 確認基本資料有填寫
     if(username == ""){
         alert("Please Enter the username in Profile Tab and Check if the Language is Correct!")
@@ -399,6 +402,9 @@ $("#create_bug").on("click", ()=> {
     }
     let resource_ids = $("#resource_ids").val().trim().replaceAll("\n", "%0A")
     let label_query = "&labels=Loc&labels=Loc_Cerberus&labels=Loc_" + LNG + (jira_labels.length > 0 ? jira_labels.trim().split(" ").map(label => "&labels=" + label).join("") : "")
+    if($("#multi_lng").is(":checked")) {
+        label_query = label_query.replace("&labels=Loc_" + LNG, "")
+    }
     let atvi_type_query = jira_labels.includes("Audio") ? "&customfield_10364=11338" : "&customfield_10364=11351"
     let atvi_type = {
         "Loc_Text_Overlap": "11352", "Loc_Text_Truncation": "11353", "Loc_Text_Missing": "11354", "Loc_Text_Context": "11355",
@@ -413,7 +419,11 @@ $("#create_bug").on("click", ()=> {
     })
     let loc_lng = {
         "FR": "11396", "IT": "11397", "DE": "11398", "ES": "11399", "RU": "11400", "PL": "11401", "AR": "11409",
-        "PTBR": "11402", "MX": "11403", "KO": "11408", "ZHS": "11406", "ZHT": "11405", "JA": "11407"
+        "PTBR": "11402", "MX": "11403", "KO": "11408", "ZHS": "11406", "ZHT": "11405", "JA": "11407",
+        "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA":
+        "11396&customfield_10446=11397&customfield_10446=11398&customfield_10446=11399&customfield_10446=11400&customfield_10446=11401" +
+        "&customfield_10446=11409&customfield_10446=11402&customfield_10446=11403&customfield_10446=11408&customfield_10446=11406" +
+        "&customfield_10446=11405&customfield_10446=11407&customfield_10446=13163&customfield_10446=11394"
     }
     let loc_lng_query = "&customfield_10446=" + loc_lng[LNG]
     let loc_type_query = ""
@@ -455,7 +465,7 @@ $("#create_bug").on("click", ()=> {
     let description = 
     "REPRO STEPS%0A" +
     "----%0A" +
-    "1%29%20Boot up CER in " + LNG + " on PS4/PS5/PC/X1/XSX%0A" +
+    "1%29%20Boot up CER in " + (LNG.split("/").length == 1 ? LNG : "affected LNG") + " on PS4/PS5/PC/X1/XSX%0A" +
     "2%29%20%0A" +
     "3%29%20Observe the issue%0A%0A" +
     "BUG OBSERVED%0A" +
