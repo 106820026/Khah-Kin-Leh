@@ -11,26 +11,81 @@ var ivy = `%c
 `
 console.log(ivy, 'color:White; background-color:Black;')
 
+// 從連結下載
+url = "https://sheets.googleapis.com/v4/spreadsheets/1kTTQCl6WuBNwbny4GoBkGBK84V0XnCVY7wgY0IlFsrE/values/A1:B2?key=AIzaSyBQSuRYGNzBxwZFUHqlhZnfhfyZN6YXPnM"
+function downloadURL(url) {
+    var link = document.createElement("a");
+    link.href = url;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    delete link;
+}
+
+// 是否詢問更新
+update_request = 1
+chrome.storage.local.get("update_request").then((result) => {
+    if(result["update_request"] != null){
+        update_request = result["update_request"]
+    }else{
+        chrome.storage.local.set({"update_request": 1 }).then(() => {})
+    }
+})
+
+// 讀取manifest.json中的版本
+fetch("../manifest.json").then(response => {
+    if(response.ok) {return response.json()}
+}).then(data => {
+    current_version = data.version
+    // 取得最新版版本
+    fetch(url).then(response => {
+        if(response.ok) {return response.json()}
+    }).then(data => {
+        latest_version = data.values[1][0] // 版本號
+        latest_file = data.values[1][1] // 下載連結
+        // 如果版本不同
+        if(current_version != latest_version){
+            // 只提醒一次
+            if(update_request){
+                // 按確認
+                if(confirm("Latest version available! Do you want to download now?") == true) {
+                    downloadURL(latest_file)
+                }else{ // 按取消 同時會新增一個下載的icon
+                    chrome.storage.local.set({"update_request": 0 }).then(() => {})
+                    $("#version").append(" <i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>")
+                }
+            }else{
+                $("#version").append(" <i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>")
+            }
+            $("#version>.fa-download").on("click", () => {
+                downloadURL(latest_file)
+                console.log($("#version").html())
+                $("#version").html($("#version").html().replace("<i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>", "<i class=\"fa-solid fa-check\"></i>"))
+            })
+        }
+}).catch(err => {
+    console.log("Error while fetching color_code.json: ", err)
+})
+}).catch(err => {
+    console.log("Error while fetching manifest.json: ", err)
+})
+
 // 切換tab
 $("#file_naming_tab").on("click", function() {
     openTab("file_naming")
-    chrome.storage.local.set({"tab": "file_naming" }).then(() => {
-    })
+    chrome.storage.local.set({"tab": "file_naming" }).then(() => {})
 })
 $("#xloc_tab").on("click", function() {
     openTab("xloc")
-    chrome.storage.local.set({"tab": "xloc" }).then(() => {
-    })
+    chrome.storage.local.set({"tab": "xloc" }).then(() => {})
 })
 $("#new_bug_tab").on("click", function() {
     openTab("new_bug")
-    chrome.storage.local.set({"tab": "new_bug" }).then(() => {
-    })
+    chrome.storage.local.set({"tab": "new_bug" }).then(() => {})
 })
 $("#profile_tab").on("click", function() {
     openTab("profile")
-    chrome.storage.local.set({"tab": "profile" }).then(() => {
-    })
+    chrome.storage.local.set({"tab": "profile" }).then(() => {})
 })
 // 切換tab的function
 function openTab(tabName) {
@@ -201,11 +256,6 @@ $("#clear_search").on("click", () => {
     $("#color_code_string").val("")
 })
 
-// Xloc tab底下的text area自動調整大小
-$('#xloc textarea').on('input', (event) => {
-    $(event.target).css("height", (event.target.scrollHeight) + "px")
-})
-
 /////////////////
 // New Bug Tab //
 /////////////////
@@ -242,9 +292,32 @@ chrome.storage.local.get("found_cl").then((result) => {
         $("#found_cl").val(result["found_cl"])
     }
 })
-// 當found CL有修改時 上傳localstorage
+// 當Found CL有修改時 上傳localstorage
 $("#found_cl").change(() => {
     chrome.storage.local.set({"found_cl": $("#found_cl").val()})
+})
+// 從localstorage讀Location資料
+chrome.storage.local.get("location").then((result) => {
+    if(result["location"] != undefined){
+        $("#location").val(result["location"])
+    }
+})
+// 當Location有修改時 上傳localstorage
+$("#location").change(() => {
+    chrome.storage.local.set({"location": $("#location").val()})
+})
+// 從localstorage讀Resource IDs資料
+chrome.storage.local.get("resource_ids").then((result) => {
+    if(result["resource_ids"] != undefined){
+        $("#resource_ids").val(result["resource_ids"])
+        // 把textarea展開
+        $("#resource_ids").css("height", "1px")
+        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) + "px")
+    }
+})
+// 當Resource IDs有修改時 上傳localstorage
+$("#resource_ids").change(() => {
+    chrome.storage.local.set({"resource_ids": $("#resource_ids").val()})
 })
 // 蒐集選擇的labels
 $(".add_label").on("click", (event) => {
@@ -276,12 +349,17 @@ $("button.advanced_type").on('click', function() {
 function clear_input(preserve_text = false) {
     $(".add_label").css("background-color", "buttonface")
     $(".specific_label").hide()
+    $("#resource_ids").val("")
+    chrome.storage.local.set({"resource_ids": ""})
     jira_labels = ""
     if(!preserve_text) {
         $("#summary").val("")
+        chrome.storage.local.set({"summary": ""})
         $("#found_cl").val("")
-        chrome.storage.local.set({"summary": $("#summary").val()})
-        chrome.storage.local.set({"found_cl": $("#found_cl").val()})
+        chrome.storage.local.set({"found_cl": ""})
+        $("#location").val("")
+        chrome.storage.local.set({"location": ""})
+        $("#season_label").css("background-color", "#ACACAC")
     }
     
 }
@@ -296,7 +374,7 @@ $("#create_bug").on("click", ()=> {
         alert("Please Enter the username in Profile Tab and Check if the Language is Correct!")
         return
     }
-    let area = "", level_query = "&customfield_10306=30237", priority_query = "&priority=11103"
+    let area = "Global", level_query = "&customfield_10306=30237", priority_query = "&priority=11103", location = $("#location").val() != "" ? $("#location").val() : "Location"
     if(jira_labels.includes("Loc_SP")){
         area = "SP"
         level_query = "&customfield_10306=12518&customfield_10306:1=16515&customfield_10360=10809"
@@ -319,6 +397,7 @@ $("#create_bug").on("click", ()=> {
     if(high_priority_issue.some(issue => jira_labels.includes(issue))){
         priority_query = "&priority=11102"
     }
+    let resource_ids = $("#resource_ids").val().trim().replaceAll("\n", "%0A")
     let label_query = "&labels=Loc&labels=Loc_Cerberus&labels=Loc_" + LNG + (jira_labels.length > 0 ? jira_labels.trim().split(" ").map(label => "&labels=" + label).join("") : "")
     let atvi_type_query = jira_labels.includes("Audio") ? "&customfield_10364=11338" : "&customfield_10364=11351"
     let atvi_type = {
@@ -366,11 +445,12 @@ $("#create_bug").on("click", ()=> {
         }
     })
     let summary = "LOC%3A%20CER%20%E2%80%93%20PS4%2FPS5%2FX1%2FXSX%2FPC%20%E2%80%93%20" + LNG + "%20%E2%80%93%20" + issue_type_1 + 
-                  "%20%E2%80%93%20" + issue_type_2 + "%20%E2%80%93%20" + area + "%2FLocation" + "%20%E2%80%93%20" + summary_detail
+                  "%20%E2%80%93%20" + issue_type_2 + "%20%E2%80%93%20" + area + "%2F" + location + "%20%E2%80%93%20" + summary_detail
     if(jira_labels.includes("Telescope")) {summary = summary + " [Telescope]"}
     let amend_in_xloc_type = ["Amendment", "Consistency", "Context", "Not_Translated", "Spelling_Grammar"]
+    let project = jira_labels.includes("Subtitle") ? " Linebooks": ""
     let action_required = amend_in_xloc_type.some(type => jira_labels.includes(type)) ?
-                          "Please%20modify%20the%20translations%20as%20suggested%20in%20the%20Excel." : 
+                          "Please%20modify%20the%20translations%20as%20suggested%20in%20the%20Excel for COD 2024" + project + " | Cerberus." : 
                           "Please%20investigate%20and%20fix%20it."
     let description = 
     "REPRO STEPS%0A" +
@@ -386,14 +466,14 @@ $("#create_bug").on("click", ()=> {
     "----%0A" +
     action_required + "%20Thanks!%0A%0A" +
     "RESOURCE%20ID%0A" +
-    "----%0A%5C%5C%20" +
+    "----%0A" + resource_ids + "%0A%0A%5C%5C%20" +
     "keywords%3A"
 
     let query_string_url = 
     "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&customfield_10325=10443&customfield_10319=10416" +
     "&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + "&description=" + description +
     "&assignee=" + username + "&customfield_10307=" + $("#found_cl").val() + priority_query + label_query + level_query + "&reporter=" + username +
-    atvi_type_query + loc_lng_query + loc_type_query
+    atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
 
     // 使用Query String在新分頁開啟Log Bug頁
     chrome.tabs.create({url: query_string_url})
@@ -421,4 +501,14 @@ $("#profile_username").on("input", function() {
 $("#check_username").on("click", function() {
     chrome.tabs.create({url: "https://dev.activision.com/jira/secure/ViewProfile.jspa"})
     return false
+})
+
+////////////
+// Global //
+////////////
+
+// text area自動調整大小
+$('textarea').on('input', (event) => {
+    $(event.target).css("height", "1px")
+    $(event.target).css("height", (event.target.scrollHeight) + "px")
 })

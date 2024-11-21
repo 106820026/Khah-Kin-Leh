@@ -3,7 +3,13 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
-
+# 2024-11-21
+1. Add Location and Resource IDs textarea in New Bug tab
+2. Set all textarea max-height to 250 px
+3. Specific xloc type (Linebooks or Non-Linebooks) in bug description
+# 2024-11-20
+1. If user didn't select any Game Mode label, the default type would be **General**
+2. The extension will now check the update itself
 # 2024-11-11
 1. Fix type (email -> username)
 # 2024-11-10
