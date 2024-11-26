@@ -7,6 +7,7 @@ Copyright&copy; 2024, Ivy Ho
 1. Fix New bug tab Resource IDs default 0px height issue
 2. Add light background selection for xloc color code translation
 3. Fix New bug tab WZ level error(typo)
+4. If user already up to date, reopen the update notice
 # 2024-11-21
 1. Add Location and Resource IDs textarea in New Bug tab
 2. Set all textarea max-height to 250 px

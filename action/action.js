@@ -63,6 +63,9 @@ fetch("../manifest.json").then(response => {
                 console.log($("#version").html())
                 $("#version").html($("#version").html().replace("<i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>", "<i class=\"fa-solid fa-check\"></i>"))
             })
+        }else{
+            // 開啟下次更新
+            chrome.storage.local.set({"update_request": 1 }).then(() => {})
         }
 }).catch(err => {
     console.log("Error while fetching color_code.json: ", err)
