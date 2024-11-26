@@ -37,6 +37,7 @@ fetch("../manifest.json").then(response => {
     if(response.ok) {return response.json()}
 }).then(data => {
     current_version = data.version
+    $("#version").text("Version " + current_version)
     // 取得最新版版本
     fetch(url).then(response => {
         if(response.ok) {return response.json()}
@@ -222,6 +223,11 @@ fetch("../data/color_code.json").then(response => {
 $("#color_code_string").on("input", function() {
     convert_to_colored_string()
 })
+// color code淺色背景
+$("#light_bg").change(function() {
+    if($("#light_bg").is(":checked")) {$("#colored_string").css("background-color", "Gold")}
+    else {$("#colored_string").css("background-color", "#333333")}
+})
 
 // 將color code轉成顏色
 function convert_to_colored_string() {
@@ -229,8 +235,8 @@ function convert_to_colored_string() {
     let color_code_string = $("#color_code_string").val()
     if(color_codes.some(color_code => color_code_string.includes(color_code))) {
         color_code_string = color_code_string.replaceAll("\\n", "<br>") // 換行符號改成html使用的
-        color_code_string = color_code_string.replaceAll("[{ui_font_bullet_point}]", "<span style=\"font-size: 30px\">&#8226;</span>") // 換行符號改成html使用的
-        color_code_string = color_code_string.replaceAll("[{ui_codpoints}]", "&#x1FA99;") // coin
+        color_code_string = color_code_string.replaceAll("[{ui_font_bullet_point}]", "<span style=\"font-size: 30px\">&#8226;</span>") // 項目符號改成html使用的
+        color_code_string = color_code_string.replaceAll("[{ui_codpoints}]", "&#128176;") // coin
         color_code_string = color_code_string.replaceAll("[{ui_lock}]", "&#128274;") // lock
         color_codes.map(function(element) { // 把color code逐一檢查
             if(color_code_string.includes(element)) {
@@ -313,8 +319,8 @@ chrome.storage.local.get("resource_ids").then((result) => {
     if(result["resource_ids"] != undefined){
         $("#resource_ids").val(result["resource_ids"])
         // 把textarea展開
-        $("#resource_ids").css("height", "1px")
-        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) + "px")
+        $("#resource_ids").css("height", "1px") // textarea和input的預設大小是19px 看起來比較一致
+        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 0 ? "21px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
     }
 })
 // 當Resource IDs有修改時 上傳localstorage
@@ -392,7 +398,7 @@ $("#create_bug").on("click", ()=> {
     }
     else if(jira_labels.includes("Loc_WZ")){
         area = "WZ"
-        level_query = "&customfield_10306=26100&customfield_10306:1=16038&customfield_10360=10812"
+        level_query = "&customfield_10306=26100&customfield_10306:1=26038&customfield_10360=10812"
     }
     let high_priority_issue = [
         "Overlap", "Consisency", "Context", "Truncation", "Not_Translated", "Missing", "Mismatch", "Audio_Cut", "SFX", "Sync", "Glossary", "Safe"
@@ -520,5 +526,5 @@ $("#check_username").on("click", function() {
 // text area自動調整大小
 $('textarea').on('input', (event) => {
     $(event.target).css("height", "1px")
-    $(event.target).css("height", (event.target.scrollHeight) + "px")
+    $(event.target).css("height", (event.target.scrollHeight) + 2 + "px") // 多+2是因為有padding
 })

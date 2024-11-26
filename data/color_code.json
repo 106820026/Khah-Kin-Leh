@@ -7,6 +7,7 @@
     "^?PALETTE_NEUTRALS.@Gray300^": "DimGrey",
     "^?CERBattlepass.@BattlepassFocusMain^": "DarkKhaki",
     "^?PALETTE_NEUTRALS.@Gray800^": "#424242",
+    "^?PALETTE_NEUTRALS.@Gray900^": "#212121",
     "^0": "Black",
     "^1": "Red",
     "^2": "LawnGreen",

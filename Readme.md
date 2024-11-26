@@ -3,6 +3,10 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2024-11-26
+1. Fix New bug tab Resource IDs default 0px height issue
+2. Add light background selection for xloc color code translation
+3. Fix New bug tab WZ level error(typo)
 # 2024-11-21
 1. Add Location and Resource IDs textarea in New Bug tab
 2. Set all textarea max-height to 250 px
@@ -10,7 +14,6 @@ Copyright&copy; 2024, Ivy Ho
 # 2024-11-20
 1. If user didn't select any Game Mode label, the default type would be **General**
 2. The extension will now check the update itself
-
 # 2024-11-14
 1. Add multilanguage check box and corresponding features
 2. Remove summary input history
