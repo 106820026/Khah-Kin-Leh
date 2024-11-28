@@ -1,5 +1,5 @@
 annoying_words = [" in-game", " in–game", "hard-coded", "hard–coded", "hard-code", "hard–code", "build-in", "build–in"]
-function retrieve_data() {
+async function retrieve_data() {
     // 取得bug內容
     summary = document.getElementById("summary-val").textContent.replaceAll(/-/g, "–")// 把半形都換成全形
     // 移除阻礙字串解析的文字
@@ -35,7 +35,7 @@ function retrieve_data() {
         "bug_type_2": bug_type_2,
         "file_name": file_name,
     }
-    chrome.runtime.sendMessage({type: "send_bug_data", bug_data: bug_data})
+    return bug_data
 }
 // 等個幾秒(default 2 sec)
 async function waitASecond(ms = 2000) {

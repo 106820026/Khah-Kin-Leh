@@ -3,6 +3,11 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2024-11-28
+1. Implement new way to retrieve bug data without delay
+2. Bug description title set to bold
+# 2024-11-27
+1. Use promise instead of recursive callback to improve readability and prevent callback hell
 # 2024-11-26
 1. Fix New bug tab Resource IDs default 0px height issue
 2. Add light background selection for xloc color code translation

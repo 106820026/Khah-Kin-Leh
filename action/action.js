@@ -134,35 +134,35 @@ $('a.report').on('click', function(){
 full_name_lang = ["EN", "FR", "IT", "DE", "ES", "RU", "PL", "AR", "ENAR", "PTBR", "MX", "KO", "ZHS", "ZHT", "JA", "TH"]
 abbreviate_lang = {"E": "EN", "F": "FR", "I": "IT", "G": "DE", "S": "ES"}
 // 取得jira上的bug資訊 填入file naming tab中 !!!同時也把bug number貼在Regression page
-chrome.runtime.sendMessage({type: "read_bug_data", value: true}, function(){
-    chrome.runtime.sendMessage({type: "get_bug_data"}, function(bug_data) {
-        if(bug_data == null){
-            console.log("Cannot get bug data from service_worker.js")
-        }else{
-            $("#current_bug").text("Currrent bug: " + bug_data.bug_id)
-            $("#bug_id").val(bug_data.bug_id)
-            $("#bug_type_1").val(bug_data.bug_type_1)
-            $("#bug_type_2").val(bug_data.bug_type_2)
-            for(language of bug_data.language.split("/")){
-                if(!full_name_lang.includes(language)){
-                    for(al of language.split("")){
-                        let selection = abbreviate_lang[al] == $("#profile_lng option:selected").val() ? "selected" : ""
-                        $("#bug_lng_select").append("<option value=\"" + abbreviate_lang[al] + "\" " + selection + ">" + abbreviate_lang[al] + "</option>")
-                    }
-                }else{
-                    let selection = language == $("#profile_lng option:selected").val() ? "selected" : ""
-                    $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
+async function read_bug_data() {
+    const bug_data = await chrome.runtime.sendMessage({type: "read_bug_data"});
+    if(bug_data == null){
+        console.log("Cannot get bug data from service_worker.js")
+    }else{
+        $("#current_bug").text("Currrent bug: " + bug_data.bug_id)
+        $("#bug_id").val(bug_data.bug_id)
+        $("#bug_type_1").val(bug_data.bug_type_1)
+        $("#bug_type_2").val(bug_data.bug_type_2)
+        for(language of bug_data.language.split("/")){
+            if(!full_name_lang.includes(language)){
+                for(al of language.split("")){
+                    let selection = abbreviate_lang[al] == $("#profile_lng option:selected").val() ? "selected" : ""
+                    $("#bug_lng_select").append("<option value=\"" + abbreviate_lang[al] + "\" " + selection + ">" + abbreviate_lang[al] + "</option>")
                 }
-            }
-            $("#release_id").val(bug_data.release_id)
-            if(bug_data.file_name == ""){
-                $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
             }else{
-                $("#file_name").val(bug_data.file_name.replace("/", "_"))
+                let selection = language == $("#profile_lng option:selected").val() ? "selected" : ""
+                $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
             }
         }
-    })
-})
+        $("#release_id").val(bug_data.release_id)
+        if(bug_data.file_name == ""){
+            $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
+        }else{
+            $("#file_name").val(bug_data.file_name.replace("/", "_"))
+        }
+    }
+}
+read_bug_data()
 
 // 更新檔案名稱
 function updateFileName() {
@@ -472,19 +472,19 @@ $("#create_bug").on("click", ()=> {
                           "Please%20modify%20the%20translations%20as%20suggested%20in%20the%20Excel for COD 2024" + project + " | Cerberus." : 
                           "Please%20investigate%20and%20fix%20it."
     let description = 
-    "REPRO STEPS%0A" +
+    "*REPRO STEPS*%0A" +
     "----%0A" +
     "1%29%20Boot up CER in " + (LNG.split("/").length == 1 ? LNG : "affected LNG") + " on PS4/PS5/PC/X1/XSX%0A" +
     "2%29%20%0A" +
     "3%29%20Observe the issue%0A%0A" +
-    "BUG OBSERVED%0A" +
+    "*BUG OBSERVED*%0A" +
     "----%0A" +
     summary_detail + "%0A%0A%5C%5C%20" +
     "Please check the screenshot attached for further details.%0A%0A" +
-    "ACTION REQUIRED%0A" +
+    "*ACTION REQUIRED*%0A" +
     "----%0A" +
     action_required + "%20Thanks!%0A%0A" +
-    "RESOURCE%20ID%0A" +
+    "*RESOURCE%20ID*%0A" +
     "----%0A" + resource_ids + "%0A%0A%5C%5C%20" +
     "keywords%3A"
 

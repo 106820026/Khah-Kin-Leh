@@ -1,22 +1,12 @@
 let bug_data, highlight, color_dict
-chrome.windows.getCurrent(function(window) {
-    current_active_window = window.id
-})
 chrome.runtime.onMessage.addListener(
-    async function(message, sender, sendResponse) {
+    function(message, sender, sendResponse) {
         switch(message.type) {
             case "read_bug_data":
-                chrome.scripting.executeScript({
-                    target: {tabId: await getCurrentTabId()},
-                    files: ['./scripts/read_bug_data.js']
+                asyncExecuteScript(['./scripts/read_bug_data.js']).then((result) => {
+                    sendResponse(result)
                 })
-                break;
-            case "send_bug_data":
-                bug_data = message.bug_data
-                break;
-            case "get_bug_data":
-                sendResponse(bug_data)
-                break;
+                return true // 告知非同步回應
             case "read_color_code":
                 fetch("../data/color_code.json").then(response => {
                     if(response.ok) {return response.json()}
@@ -28,22 +18,25 @@ chrome.runtime.onMessage.addListener(
                 sendResponse(color_dict)
                 break;
             case "highlight_color_code":
-                chrome.scripting.executeScript({
-                    target: {tabId: await getCurrentTabId()},
-                    files: ['./scripts/highlight_color_code.js']
-                })
+                asyncExecuteScript(['./scripts/highlight_color_code.js'])
                 break;
             case "highlight_translation_difference":
-                chrome.scripting.executeScript({
-                    target: {tabId: await getCurrentTabId()},
-                    files: ['./scripts/highlight_translation_difference.js']
-                })
+                asyncExecuteScript(['./scripts/highlight_translation_difference.js'])
                 break;
             default:
                 console.error("Unrecognised message type: ", message.type);
         }
     }
 )
+
+// 讓Promise可以傳回pup up 因為onMessage加了async會無法傳訊息過去 參考https://stackoverflow.com/questions/53024819/sendresponse-not-waiting-for-async-function-or-promises-resolve
+async function asyncExecuteScript(files) {
+    const result = await chrome.scripting.executeScript({
+        target: {tabId: await getCurrentTabId()},
+        files: files
+    })
+    return result[0].result
+}
 
 // 取得目前tab ID
 async function getCurrentTabId() {
