@@ -3,6 +3,14 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2024-12-04
+1. Expand the text area in xloc tab
+2. Update tab order to New bug > Naming > XLOC > Profile
+3. Fix typo (Grammer -> Grammar) and use "/" instead of "-" in summary if but type 2 is Spelling&Grammar
+4. Remove "All" in Loc Language if logging a multi-language bug
+# 2024-11-29
+1. Fix translation contrast bug
+2. Add regression lock at file naming tab
 # 2024-11-28
 1. Implement new way to retrieve bug data without delay
 2. Bug description title set to bold

@@ -6,53 +6,13 @@
     </head>
     <body>
         <div class="tab">
+            <button id="new_bug_tab" class="tablinks">New Bug</button>
             <button id="file_naming_tab" class="tablinks">File Naming</button>
             <button id="xloc_tab" class="tablinks">Xloc</button>
-            <button id="new_bug_tab" class="tablinks">New Bug</button>
             <button id="profile_tab" class="tablinks">Profile</button>
         </div>
         
         <!-- Tab content -->
-        <div id="file_naming" class="tabcontent">
-            <label for="bug_id">Bug Number:</label>
-            <input type="text" id="bug_id" placeholder="Bug ID" value="" disabled/>
-            <label for="bug_type_1">Bug Type 1:</label>
-            <input type="text" id="bug_type_1" placeholder="Bug Type 1" value="" disabled/>
-            <label for="bug_type_2">Bug Type 2:</label>
-            <input type="text" id="bug_type_2" placeholder="Bug Type 2" value="" disabled/>
-            <label for="bug_lng_select">Language:</label>
-            <select id="bug_lng_select"></select><br>
-            <label for="release_id">Release ID:</label>
-            <input type="text" id="release_id" placeholder="Release ID" value=""/>
-            <label for="file_name">File Name:</label>
-            <div class="copy_comment">
-                <textarea id="file_name" rows="3"></textarea>
-                <button id="file_name_copy" title="Copy">copy</button>
-            </div>
-            <div class="file_naming_button">
-                <button class="add_postfix" id="plus_1">_1</button>
-                <button class="add_postfix" id="plus_2">_2</button>
-                <button class="add_postfix" id="plus_3">_3</button>
-                <button class="add_postfix" id="plus_4">_4</button>
-                <button class="add_postfix" id="plus_5">_5</button>
-                <button class="add_postfix" id="plus_6">_6</button>
-                <button class="add_postfix" id="plus_7">_7</button>
-                <button class="add_postfix" id="plus_8">_8</button>
-            </div>
-        </div>
-
-        <div id="xloc" class="tabcontent">
-            <button id="translation_contrast">Translation Contrast</button><Br>
-            <button id="toggle_highlight">Toggle Highlight</button>
-            <button id="clear_search">Clear Search</button>
-            <label style="display: inline-flex; align-items: center;"> 
-                <input id="light_bg" type="checkbox" style="flex: none;"> 
-                Light BG
-            </label>
-            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="1"></textarea>
-            <p id="colored_string"></p>            
-        </div>
-
         <div id="new_bug" class="tabcontent">
             <label for="summary">Summary:</label><input id="summary" type="text" autocomplete="off">
             <div class="labels">
@@ -81,7 +41,7 @@
                     <button class="add_label issue_type_2">Loc_Text_Truncation</button> <button class="add_label issue_type_2">Loc_Text_Font_Size</button>
                     <button class="add_label issue_type_2">Loc_Text_Alignment</button> <button class="add_label issue_type_2">Loc_Text_Graphic</button>
                     <button class="add_label issue_type_2">Loc_Text_Not_Translated</button> <button class="add_label issue_type_2">Loc_Text_Integration</button>
-                    <button class="add_label issue_type_2">Loc_Text_Spelling_Grammer</button> <button class="add_label issue_type_2">Loc_Text_Missing</button>
+                    <button class="add_label issue_type_2">Loc_Text_Spelling_Grammar</button> <button class="add_label issue_type_2">Loc_Text_Missing</button>
                 </div>
                 <div class="subtitle_specific" style="display: none;">
                     <p>Issue Type(Subtitle)</p>
@@ -111,6 +71,50 @@
             <div style="display: flex; justify-content: center; margin-top: 8px;">
                 <button id="clear_input"><span style="color: red;">CLEAR</span> All</button>&emsp;<button id="create_bug">Create Bug</button>
             </div>
+        </div>
+
+        <div id="file_naming" class="tabcontent">
+            <label for="bug_id">Bug Number:</label>
+            <input type="text" id="bug_id" placeholder="Bug ID" value="" disabled/>
+            <label for="bug_type_1">Bug Type 1:</label>
+            <input type="text" id="bug_type_1" placeholder="Bug Type 1" value="" disabled/>
+            <label for="bug_type_2">Bug Type 2:</label>
+            <input type="text" id="bug_type_2" placeholder="Bug Type 2" value="" disabled/>
+            <label for="bug_lng_select">Language:</label>
+            <select id="bug_lng_select"></select><br>
+            <label for="release_id">Release ID:</label>
+            <input type="text" id="release_id" placeholder="Release ID" value="" style="width: 30%;"/>
+            <label style="display: inline-flex; align-items: center;"> 
+            <input id="regression_lock" type="checkbox" style="flex: none;"> 
+                Regression Lock
+            </label><br>
+            <label for="file_name">File Name:</label>
+            <div class="copy_comment">
+                <textarea id="file_name" rows="3"></textarea>
+                <button id="file_name_copy" title="Copy">copy</button>
+            </div>
+            <div class="file_naming_button">
+                <button class="add_postfix" id="plus_1">_1</button>
+                <button class="add_postfix" id="plus_2">_2</button>
+                <button class="add_postfix" id="plus_3">_3</button>
+                <button class="add_postfix" id="plus_4">_4</button>
+                <button class="add_postfix" id="plus_5">_5</button>
+                <button class="add_postfix" id="plus_6">_6</button>
+                <button class="add_postfix" id="plus_7">_7</button>
+                <button class="add_postfix" id="plus_8">_8</button>
+            </div>
+        </div>
+
+        <div id="xloc" class="tabcontent">
+            <button id="translation_contrast">Translation Contrast</button><Br>
+            <button id="toggle_highlight">Toggle Highlight</button>
+            <button id="clear_search">Clear Search</button>
+            <label style="display: inline-flex; align-items: center;"> 
+                <input id="light_bg" type="checkbox" style="flex: none;"> 
+                Light BG
+            </label>
+            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="2"></textarea>
+            <p id="colored_string"></p>            
         </div>
 
         <div id="profile" class="tabcontent">

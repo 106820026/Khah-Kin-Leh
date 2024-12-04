@@ -11,6 +11,17 @@ var ivy = `%c
 `
 console.log(ivy, 'color:White; background-color:Black;')
 
+
+////////////
+// Global //
+////////////
+
+// text area自動調整大小
+$('textarea').on('input', (event) => {
+    $(event.target).css("height", "1px")
+    $(event.target).css("height", (event.target.scrollHeight) + 2 + "px") // 多+2是因為有padding
+})
+
 // 從連結下載
 url = "https://sheets.googleapis.com/v4/spreadsheets/1kTTQCl6WuBNwbny4GoBkGBK84V0XnCVY7wgY0IlFsrE/values/A1:B2?key=AIzaSyBQSuRYGNzBxwZFUHqlhZnfhfyZN6YXPnM"
 function downloadURL(url) {
@@ -125,146 +136,6 @@ chrome.storage.local.get("tab").then((result) => {
 $('a.report').on('click', function(){
     chrome.tabs.create({url: $(this).attr('href')})
     return false
-})
-
-//////////////////////
-// File Naming page //
-//////////////////////
-
-full_name_lang = ["EN", "FR", "IT", "DE", "ES", "RU", "PL", "AR", "ENAR", "PTBR", "MX", "KO", "ZHS", "ZHT", "JA", "TH"]
-abbreviate_lang = {"E": "EN", "F": "FR", "I": "IT", "G": "DE", "S": "ES"}
-// 取得jira上的bug資訊 填入file naming tab中 !!!同時也把bug number貼在Regression page
-async function read_bug_data() {
-    const bug_data = await chrome.runtime.sendMessage({type: "read_bug_data"});
-    if(bug_data == null){
-        console.log("Cannot get bug data from service_worker.js")
-    }else{
-        $("#current_bug").text("Currrent bug: " + bug_data.bug_id)
-        $("#bug_id").val(bug_data.bug_id)
-        $("#bug_type_1").val(bug_data.bug_type_1)
-        $("#bug_type_2").val(bug_data.bug_type_2)
-        for(language of bug_data.language.split("/")){
-            if(!full_name_lang.includes(language)){
-                for(al of language.split("")){
-                    let selection = abbreviate_lang[al] == $("#profile_lng option:selected").val() ? "selected" : ""
-                    $("#bug_lng_select").append("<option value=\"" + abbreviate_lang[al] + "\" " + selection + ">" + abbreviate_lang[al] + "</option>")
-                }
-            }else{
-                let selection = language == $("#profile_lng option:selected").val() ? "selected" : ""
-                $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
-            }
-        }
-        $("#release_id").val(bug_data.release_id)
-        if(bug_data.file_name == ""){
-            $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
-        }else{
-            $("#file_name").val(bug_data.file_name.replace("/", "_"))
-        }
-    }
-}
-read_bug_data()
-
-// 更新檔案名稱
-function updateFileName() {
-    $("#file_name").val(
-        // 防止有因為bug_type_2是空值導致的連續底線 和 /
-        ($("#bug_id").val() + "_" + $("#bug_lng_select").val() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val() + "_" + $("#release_id").val()).replaceAll("__", "_").replace("/", "_")
-    )
-}
-// 語言切換
-$("#bug_lng_select").change(() => {
-    updateFileName()
-})
-// 輸入更新時 更新檔案名稱
-$("#release_id").on("input", function() {
-    updateFileName()
-})
-// 按下filename複製
-$("#file_name_copy").on("click", () => {
-    navigator.clipboard.writeText($("#file_name").val()).then(() => {
-        console.log('Async: Copying to clipboard was successful!');
-    }, function(err) {
-        alert('Async: Could not copy text: ', err);
-    });
-})
-// 按下_1, _2, _3...
-$(".add_postfix").on("click", (event) => {
-    let reg = new RegExp('_[0-9]$')
-    let tag = $(event.target).text()
-    let str = $("#file_name").val()
-    if(reg.test(str)){
-        if(str.substring(str.length - 2) == tag){
-            $("#file_name").val(str.substring(0, str.length - 2))
-            $(".add_postfix").css("background-color", "buttonface")
-        }else{
-            $("#file_name").val(str.substring(0, str.length - 2) + tag)
-            $(".add_postfix").css("background-color", "buttonface")
-            $(event.target).css("background-color", "#ACACAC")
-        }
-    }else{
-        $("#file_name").val(str + tag)
-        $(event.target).css("background-color", "#ACACAC")
-    }
-})
-
-///////////////
-// Xloc Page //
-///////////////
-let color_dict, color_codes = null
-
-// 從color_code.json讀取資料
-fetch("../data/color_code.json").then(response => {
-    if(response.ok) {return response.json()}
-}).then(data => {
-    color_dict = data
-    color_codes = Object.keys(color_dict)
-}).catch(err => {
-    console.log("Error while fetching color_code.json: ", err)
-})
-
-// color code字串輸入監聽
-$("#color_code_string").on("input", function() {
-    convert_to_colored_string()
-})
-// color code淺色背景
-$("#light_bg").change(function() {
-    if($("#light_bg").is(":checked")) {$("#colored_string").css("background-color", "Gold")}
-    else {$("#colored_string").css("background-color", "#333333")}
-})
-
-// 將color code轉成顏色
-function convert_to_colored_string() {
-    console.log("Converting to colored string")
-    let color_code_string = $("#color_code_string").val()
-    if(color_codes.some(color_code => color_code_string.includes(color_code))) {
-        color_code_string = color_code_string.replaceAll("\\n", "<br>") // 換行符號改成html使用的
-        color_code_string = color_code_string.replaceAll("[{ui_font_bullet_point}]", "<span style=\"font-size: 30px\">&#8226;</span>") // 項目符號改成html使用的
-        color_code_string = color_code_string.replaceAll("[{ui_codpoints}]", "&#128176;") // coin
-        color_code_string = color_code_string.replaceAll("[{ui_lock}]", "&#128274;") // lock
-        color_codes.map(function(element) { // 把color code逐一檢查
-            if(color_code_string.includes(element)) {
-                color_code_string = color_code_string.replaceAll(element, "</span><span style=\"color: " + color_dict[element] + "\">")
-            }
-        })
-        color_code_string = color_code_string.replace("</span>", "") // 把第一個多加的</span>去掉
-        color_code_string = color_code_string + "</span>" // 把最後少加的</span>加回去
-        $("#colored_string").empty()
-        $("#colored_string").append(color_code_string)
-    }else{
-        $("#colored_string").empty()
-        $("#colored_string").append("<span style='color: red; font-weight: bolder;'>Color code Error!<span>")
-    }
-}
-$("#translation_contrast").on("click", () => {
-    chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
-})
-
-$("#toggle_highlight").on("click", () => {
-    chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
-})
-
-$("#clear_search").on("click", () => {
-    $("#color_code_string").val("")
 })
 
 /////////////////
@@ -386,7 +257,7 @@ $("#create_bug").on("click", ()=> {
         alert("Please Enter the username in Profile Tab and Check if the Language is Correct!")
         return
     }
-    let area = "Global", level_query = "&customfield_10306=30237", priority_query = "&priority=11103", location = $("#location").val() != "" ? $("#location").val() : "Location"
+    let area = "Global", level_query = "&customfield_10306=30237&customfield_10360=10814", priority_query = "&priority=11103", location = $("#location").val() != "" ? $("#location").val() : "Location"
     if(jira_labels.includes("Loc_SP")){
         area = "SP"
         level_query = "&customfield_10306=12518&customfield_10306:1=16515&customfield_10360=10809"
@@ -432,7 +303,7 @@ $("#create_bug").on("click", ()=> {
         "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA":
         "11396&customfield_10446=11397&customfield_10446=11398&customfield_10446=11399&customfield_10446=11400&customfield_10446=11401" +
         "&customfield_10446=11409&customfield_10446=11402&customfield_10446=11403&customfield_10446=11408&customfield_10446=11406" +
-        "&customfield_10446=11405&customfield_10446=11407&customfield_10446=13163&customfield_10446=11394"
+        "&customfield_10446=11405&customfield_10446=11407&customfield_10446=11394"
     }
     let loc_lng_query = "&customfield_10446=" + loc_lng[LNG]
     let loc_type_query = ""
@@ -445,7 +316,7 @@ $("#create_bug").on("click", ()=> {
         "Loc_Subtitle_Missing": "30501", "Loc_Subtitle_Not_Translated": "30500", "Loc_Subtitle_Spelling_Grammar": "26070", "Loc_Text_Alignment": "11419",
         "Loc_Text_Amendment": "11415", "Loc_Text_Consistency": "11414", "Loc_Text_Context": "11413", "Loc_Text_Font_Size": "11420",
         "Loc_Text_Graphic": "11418", "Loc_Text_Integration": "16205", "Loc_Text_Missing": "11410", "Loc_Text_Not_Translated": "11411",
-        "Loc_Text_Overlap": "11417", "Loc_Text_Spelling_Grammer": "11412", "Loc_Text_Truncation": "11416"
+        "Loc_Text_Overlap": "11417", "Loc_Text_Spelling_Grammar": "11412", "Loc_Text_Truncation": "11416"
     }
     Object.keys(loc_type).forEach(type => {
         if(jira_labels.includes(type)){
@@ -455,7 +326,7 @@ $("#create_bug").on("click", ()=> {
     // 移除影響query string的符號
     let summary_detail = $("#summary").val().replace("&", "%26").replace("=", "%3D")
     let issue_type_1 = $(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text().replace("Loc_", "").toUpperCase()
-    let issue_type_2 = $(".issue_type_2[style='background-color: rgb(172, 172, 172);']").text().replace($(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text() + "_", "").toUpperCase()
+    let issue_type_2 = $(".issue_type_2[style='background-color: rgb(172, 172, 172);']").text().replace($(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text() + "_", "").replace("_", "/").toUpperCase()
                        
     let high_priority_type_2 = ["Loc_Arabic_Safe", "Loc_German_Safe", "Loc_Japanese_Safe"]
     high_priority_type_2.forEach(type => {
@@ -500,6 +371,182 @@ $("#create_bug").on("click", ()=> {
     return false
 })
 
+//////////////////////
+// File Naming page //
+//////////////////////
+
+// 當Release ID有修改且Regression Lock打勾時 上傳localstorage
+$("#release_id").on("input", function() {
+    if($("#regression_lock").is(":checked")){
+        chrome.storage.local.set({"release_id": $("#release_id").val()})
+    }
+})
+
+// Regression Lock打勾資訊和目前的release ID 上傳localstorage
+current_release_id = ""
+regression_release_id = ""
+$('#regression_lock').change(function() {
+    chrome.storage.local.set({"regression_lock": $("#regression_lock").is(":checked")})
+    if($("#regression_lock").is(":checked")){
+        chrome.storage.local.set({"release_id": $("#release_id").val()})
+        $("#release_id").val(regression_release_id)
+    }else{
+        $("#release_id").val(current_release_id)
+    }
+})
+// 取得localstorage上Regression Lock打勾資訊
+chrome.storage.local.get("regression_lock").then((result) => {
+    if(result["regression_lock"] != undefined){
+        $("#regression_lock").prop('checked', result["regression_lock"])
+    }
+})
+
+full_name_lang = ["EN", "FR", "IT", "DE", "ES", "RU", "PL", "AR", "ENAR", "PTBR", "MX", "KO", "ZHS", "ZHT", "JA", "TH"]
+abbreviate_lang = {"E": "EN", "F": "FR", "I": "IT", "G": "DE", "S": "ES"}
+// 取得jira上的bug資訊 填入file naming tab中 !!!同時也把bug number貼在Regression page
+async function read_bug_data() {
+    const bug_data = await chrome.runtime.sendMessage({type: "read_bug_data"});
+    if(bug_data == null){
+        console.log("Cannot get bug data from service_worker.js")
+    }else{
+        $("#current_bug").text("Currrent bug: " + bug_data.bug_id)
+        $("#bug_id").val(bug_data.bug_id)
+        $("#bug_type_1").val(bug_data.bug_type_1)
+        $("#bug_type_2").val(bug_data.bug_type_2)
+        for(language of bug_data.language.split("/")){
+            if(!full_name_lang.includes(language)){
+                for(al of language.split("")){
+                    let selection = abbreviate_lang[al] == $("#profile_lng option:selected").val() ? "selected" : ""
+                    $("#bug_lng_select").append("<option value=\"" + abbreviate_lang[al] + "\" " + selection + ">" + abbreviate_lang[al] + "</option>")
+                }
+            }else{
+                let selection = language == $("#profile_lng option:selected").val() ? "selected" : ""
+                $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
+            }
+        }
+        if($("#regression_lock").is(":checked")){
+            chrome.storage.local.get("release_id").then((result) => {
+                if(result["release_id"] != undefined){
+                    $("#release_id").val(result["release_id"])
+                    regression_release_id = result["release_id"]
+                }
+            })
+            current_release_id = bug_data.release_id
+        }else{
+            $("#release_id").val(bug_data.release_id)
+        }
+        if(bug_data.file_name == ""){
+            $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
+        }else{
+            $("#file_name").val(bug_data.file_name.replace("/", "_"))
+        }
+    }
+}
+read_bug_data()
+
+// 更新檔案名稱
+function updateFileName() {
+    $("#file_name").val(
+        // 防止有因為bug_type_2是空值導致的連續底線 和 /
+        ($("#bug_id").val() + "_" + $("#bug_lng_select").val() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val() + "_" + $("#release_id").val()).replaceAll("__", "_").replace("/", "_")
+    )
+}
+// 語言切換
+$("#bug_lng_select").change(() => {
+    updateFileName()
+})
+// 輸入更新時 更新檔案名稱
+$("#release_id").on("input", function() {
+    updateFileName()
+})
+// 按下filename複製
+$("#file_name_copy").on("click", () => {
+    navigator.clipboard.writeText($("#file_name").val()).then(() => {
+        console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+        alert('Async: Could not copy text: ', err);
+    });
+})
+// 按下_1, _2, _3...
+$(".add_postfix").on("click", (event) => {
+    let reg = new RegExp('_[0-9]$')
+    let tag = $(event.target).text()
+    let str = $("#file_name").val()
+    if(reg.test(str)){
+        if(str.substring(str.length - 2) == tag){
+            $("#file_name").val(str.substring(0, str.length - 2))
+            $(".add_postfix").css("background-color", "buttonface")
+        }else{
+            $("#file_name").val(str.substring(0, str.length - 2) + tag)
+            $(".add_postfix").css("background-color", "buttonface")
+            $(event.target).css("background-color", "#ACACAC")
+        }
+    }else{
+        $("#file_name").val(str + tag)
+        $(event.target).css("background-color", "#ACACAC")
+    }
+})
+
+///////////////
+// Xloc Page //
+///////////////
+let color_dict, color_codes = null
+
+// 從color_code.json讀取資料
+fetch("../data/color_code.json").then(response => {
+    if(response.ok) {return response.json()}
+}).then(data => {
+    color_dict = data
+    color_codes = Object.keys(color_dict)
+}).catch(err => {
+    console.log("Error while fetching color_code.json: ", err)
+})
+
+// color code字串輸入監聽
+$("#color_code_string").on("input", function() {
+    convert_to_colored_string()
+})
+// color code淺色背景
+$("#light_bg").change(function() {
+    if($("#light_bg").is(":checked")) {$("#colored_string").css("background-color", "Gold")}
+    else {$("#colored_string").css("background-color", "#333333")}
+})
+
+// 將color code轉成顏色
+function convert_to_colored_string() {
+    console.log("Converting to colored string")
+    let color_code_string = $("#color_code_string").val()
+    if(color_codes.some(color_code => color_code_string.includes(color_code))) {
+        color_code_string = color_code_string.replaceAll("\\n", "<br>") // 換行符號改成html使用的
+        color_code_string = color_code_string.replaceAll("[{ui_font_bullet_point}]", "<span style=\"font-size: 30px\">&#8226;</span>") // 項目符號改成html使用的
+        color_code_string = color_code_string.replaceAll("[{ui_codpoints}]", "&#128176;") // coin
+        color_code_string = color_code_string.replaceAll("[{ui_lock}]", "&#128274;") // lock
+        color_codes.map(function(element) { // 把color code逐一檢查
+            if(color_code_string.includes(element)) {
+                color_code_string = color_code_string.replaceAll(element, "</span><span style=\"color: " + color_dict[element] + "\">")
+            }
+        })
+        color_code_string = color_code_string.replace("</span>", "") // 把第一個多加的</span>去掉
+        color_code_string = color_code_string + "</span>" // 把最後少加的</span>加回去
+        $("#colored_string").empty()
+        $("#colored_string").append(color_code_string)
+    }else{
+        $("#colored_string").empty()
+        $("#colored_string").append("<span style='color: red; font-weight: bolder;'>Color code Error!<span>")
+    }
+}
+$("#translation_contrast").on("click", () => {
+    chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
+})
+
+$("#toggle_highlight").on("click", () => {
+    chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
+})
+
+$("#clear_search").on("click", () => {
+    $("#color_code_string").val("")
+})
+
 /////////////////
 // Profile Tab //
 ////////////////
@@ -520,14 +567,4 @@ $("#profile_username").on("input", function() {
 $("#check_username").on("click", function() {
     chrome.tabs.create({url: "https://dev.activision.com/jira/secure/ViewProfile.jspa"})
     return false
-})
-
-////////////
-// Global //
-////////////
-
-// text area自動調整大小
-$('textarea').on('input', (event) => {
-    $(event.target).css("height", "1px")
-    $(event.target).css("height", (event.target.scrollHeight) + 2 + "px") // 多+2是因為有padding
 })
