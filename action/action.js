@@ -384,15 +384,14 @@ $("#release_id").on("input", function() {
 
 // Regression Lock打勾資訊和目前的release ID 上傳localstorage
 current_release_id = ""
-regression_release_id = ""
 $('#regression_lock').change(function() {
     chrome.storage.local.set({"regression_lock": $("#regression_lock").is(":checked")})
     if($("#regression_lock").is(":checked")){
         chrome.storage.local.set({"release_id": $("#release_id").val()})
-        $("#release_id").val(regression_release_id)
     }else{
         $("#release_id").val(current_release_id)
     }
+    updateFileName()
 })
 // 取得localstorage上Regression Lock打勾資訊
 chrome.storage.local.get("regression_lock").then((result) => {
@@ -425,21 +424,16 @@ async function read_bug_data() {
             }
         }
         if($("#regression_lock").is(":checked")){
-            chrome.storage.local.get("release_id").then((result) => {
+            await chrome.storage.local.get("release_id").then((result) => {
                 if(result["release_id"] != undefined){
                     $("#release_id").val(result["release_id"])
-                    regression_release_id = result["release_id"]
                 }
             })
-            current_release_id = bug_data.release_id
         }else{
             $("#release_id").val(bug_data.release_id)
         }
-        if(bug_data.file_name == ""){
-            $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
-        }else{
-            $("#file_name").val(bug_data.file_name.replace("/", "_"))
-        }
+        current_release_id = bug_data.release_id
+        $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
     }
 }
 read_bug_data()

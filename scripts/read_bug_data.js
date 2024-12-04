@@ -25,15 +25,12 @@ async function retrieve_data() {
     }
     bug_id = document.getElementById("key-val").textContent
     release_id = (project == "IW9" ? document.getElementById("customfield_10403-val").textContent : document.getElementById("customfield_10307-val").textContent).trim()
-    // 多語言的在action.js再做處理 防止有因為bug_type_2是空值導致的連續底線
-    file_name = (language.split("/").length == 1 ? bug_id + "_" + language + "_" + bug_type_1 + "_" + bug_type_2 + "_" + release_id : "").replaceAll("__", "_") 
     bug_data = {
         "bug_id": bug_id,
         "release_id": release_id,
         "language": language,
         "bug_type_1": bug_type_1,
         "bug_type_2": bug_type_2,
-        "file_name": file_name,
     }
     return bug_data
 }
