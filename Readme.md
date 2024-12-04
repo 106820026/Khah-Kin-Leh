@@ -8,8 +8,9 @@ Copyright&copy; 2024, Ivy Ho
 2. Update tab order to New bug > Naming > XLOC > Profile
 3. Fix typo (Grammer -> Grammar) and use "/" instead of "-" in summary if but type 2 is Spelling&Grammar
 4. Remove "All" in Loc Language if logging a multi-language bug
+5. Remove all front and end space for found CL in new bug tab
 # 2024-11-29
-1. Fix translation contrast bug
+1. Fix translation contrast bug(Create a pointer to prevent finding wrong text to highlight)
 2. Add regression lock at file naming tab
 # 2024-11-28
 1. Implement new way to retrieve bug data without delay

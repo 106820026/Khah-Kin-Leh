@@ -362,7 +362,7 @@ $("#create_bug").on("click", ()=> {
     let query_string_url = 
     "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&customfield_10325=10443&customfield_10319=10416" +
     "&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + "&description=" + description +
-    "&assignee=" + username + "&customfield_10307=" + $("#found_cl").val() + priority_query + label_query + level_query + "&reporter=" + username +
+    "&assignee=" + username + "&customfield_10307=" + $("#found_cl").val().trim() + priority_query + label_query + level_query + "&reporter=" + username +
     atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
 
     // 使用Query String在新分頁開啟Log Bug頁
