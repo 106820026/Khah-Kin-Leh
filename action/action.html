@@ -18,7 +18,7 @@
             <div class="labels">
                 <input type="text" id="found_cl" placeholder="Found CL" style="width: 30%;">
                 <input type="text" id="location" placeholder="Location" style="width: 30%;">
-                <button class="add_label" id="season_label" style="background-color: rgb(172, 172, 172);">Season</button>
+                <button class="add_label selected" id="season_label">Season</button>
                 <input id="season_num" type="number" min="1" value="1" step=".5">
                 <textarea id="resource_ids" placeholder="Input resource IDs here" rows="1"></textarea>
                 <label style="display: inline-flex; align-items: center;"> 
@@ -34,7 +34,7 @@
                 <button class="add_label issue_type_2">Loc_Arabic_Safe</button> 
                 <button class="add_label issue_type_2">Loc_German_Safe</button> 
                 <button class="add_label issue_type_2">Loc_Japanese_Safe</button>
-                <div class="text_specific" style="display: none;">
+                <div class="specific_label text_specific" style="display: none;">
                     <p>Issue Type(Text)</p>
                     <button class="add_label issue_type_2">Loc_Text_Amendment</button> <button class="add_label issue_type_2">Loc_Text_Overlap</button>
                     <button class="add_label issue_type_2">Loc_Text_Consistency</button> <button class="add_label issue_type_2">Loc_Text_Context</button>
@@ -43,7 +43,7 @@
                     <button class="add_label issue_type_2">Loc_Text_Not_Translated</button> <button class="add_label issue_type_2">Loc_Text_Integration</button>
                     <button class="add_label issue_type_2">Loc_Text_Spelling_Grammar</button> <button class="add_label issue_type_2">Loc_Text_Missing</button>
                 </div>
-                <div class="subtitle_specific" style="display: none;">
+                <div class="specific_label subtitle_specific" style="display: none;">
                     <p>Issue Type(Subtitle)</p>
                     <button class="add_label issue_type_2">Loc_Subtitle_Amendment</button> <button class="add_label issue_type_2">Loc_Subtitle_Overlap</button>
                     <button class="add_label issue_type_2">Loc_Subtitle_Consistency</button> <button class="add_label issue_type_2">Loc_Subtitle_Context</button>
@@ -52,7 +52,7 @@
                     <button class="add_label issue_type_2">Loc_Subtitle_Integration</button> <button class="add_label issue_type_2">Loc_Subtitle_Missing</button>
                     <button class="add_label issue_type_2">Loc_Subtitle_Not_Translated</button> <button class="add_label issue_type_2">Loc_Subtitle_Spelling_Grammar</button>
                 </div>
-                <div class="audio_specific" style="display: none;">
+                <div class="specific_label audio_specific" style="display: none;">
                     <p>Issue Type(Audio)</p>
                     <button class="add_label issue_type_2">Loc_Audio_Consistency</button> <button class="add_label issue_type_2">Loc_Audio_Context</button>
                     <button class="add_label issue_type_2">Loc_Audio_Cut</button> <button class="add_label issue_type_2">Loc_Audio_Missing</button>
@@ -60,7 +60,7 @@
                     <button class="add_label issue_type_2">Loc_Audio_SFX</button> <button class="add_label issue_type_2">Loc_Audio_Volume</button>
                     <button class="add_label issue_type_2">Loc_Audio_Text_Integration</button> <button class="add_label issue_type_2">Loc_Audio_Sync</button>
                 </div>
-                <div class="telescope_specific" style="display: none;">
+                <div class="specific_label telescope_specific" style="display: none;">
                     <p>Issue Type(Telescope)</p>
                     <button class="add_label">Loc_Telescope</button> <button class="add_label">Telescope</button> <button class="add_label">telescope</button>
                     <button class="add_label">CER<span style="color: DarkOrange;">MP</span>LB</button> <button class="add_label">CER<span style="color: DarkOrange;">ZM</span>LB</button> 
@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div style="display: flex; justify-content: center; margin-top: 8px;">
-                <button id="clear_input"><span style="color: red;">CLEAR</span> All</button>&emsp;<button id="create_bug">Create Bug</button>
+                <button id="clear_input">CLEAR All</button>&emsp;<button id="create_bug">Create Bug</button>
             </div>
         </div>
 
@@ -91,7 +91,7 @@
             <label for="file_name">File Name:</label>
             <div class="copy_comment">
                 <textarea id="file_name" rows="3"></textarea>
-                <button id="file_name_copy" title="Copy">copy</button>
+                <button id="file_name_copy" title="Copy"><i class="fa-solid fa-copy"></i></button>
             </div>
             <div class="file_naming_button">
                 <button class="add_postfix" id="plus_1">_1</button>
@@ -118,8 +118,13 @@
         </div>
 
         <div id="profile" class="tabcontent">
+            <label for="theme">&nbsp;&nbsp;&emsp;Theme&nbsp;&nbsp;&emsp;</label>
+            <select id="theme" style="width: 70%;">
+                <option id="default" value="default">Default</option>
+                <option id="taco" value="taco">Taco</option>
+            </select><br>
             <label for="profile_lng">Loc Language</label>
-            <select id="profile_lng">
+            <select id="profile_lng" style="width: 70%;">
                 <option id="FR" value="FR">French</option>
                 <option id="IT" value="IT">Italian</option>
                 <option id="DE" value="DE">German</option>
@@ -136,7 +141,11 @@
             </select><br>
             <span for="profile_username">Jira Username</span>
             <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="width: 70%;">
-            <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a>
+            <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a><br><br>
+            <b>What's New</b>
+            <ol>
+                <li>Add What's New in Profile tab</li>
+            </ol>
         </div>
 
         <footer style="display: flex; justify-content: space-between;">

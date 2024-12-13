@@ -1,0 +1,21 @@
+{
+    "html_background-color": "#fff",
+    "html, a_color": "#000",
+    "div.tab_background-color": "#f1f1f1",
+    "div.tab_border-color": "#ccc",
+    "label, span_color": "#000",
+    "p_color": "#000",
+    "button_border-color": "#ddd",
+    "button_color": "#000",
+    "button_background-color": "#f1f1f1",
+    "button.selected_color": "#000",
+    "button.selected_background-color": "#ACACAC",
+    "button+selected:hover_background-color": ["#ACACAC", "#f1f1f1"],
+    "button+selected:hover_color": ["#000", "#000"],
+    "button.tablinks_color": "#000",
+    "button.tablinks:hover_color": ["#000", "#000"],
+    "button.tablinks.active_background-color": "#ccc",
+    "button.tablinks:hover_background-color": ["#ccc", "#f1f1f1"],
+    "button.tablinks:click_background-color": ["#ccc", "#f1f1f1"],
+    "button.tablinks+active:hover_background-color": ["#ccc", "#f1f1f1"]
+}

@@ -210,18 +210,16 @@ $(".add_label").on("click", (event) => {
         $("#season_num").prop('disabled', num_lock)
     }
     if(!jira_labels.includes(_label)) {
-        $(event.target).css("background-color", "#ACACAC")
+        $(event.target).addClass("selected")
         jira_labels += _label
     }else {
-        $(event.target).css("background-color", "buttonface")
+        $(event.target).removeClass("selected")
         jira_labels = jira_labels.replace(_label, "")
     }
-    // 儲存至local storage
-    // chrome.storage.local.set({"selected_label": jira_labels})
 })
 // 打開衍伸的labels(Text, Audio, Subtitle, Telescope)
 $("button.advanced_type").on('click', function() {
-    if($(this).css('background-color') == "rgb(172, 172, 172)") {
+    if($(this).hasClass("selected")) {
         $("div." + $(this).text().split("_")[1] + "_specific").show()
     }else{
         $("div." + $(this).text().split("_")[1] + "_specific").hide()
@@ -229,7 +227,7 @@ $("button.advanced_type").on('click', function() {
 })
 // 清除所有input並更新至local storage
 function clear_input(preserve_text = false) {
-    $(".add_label").css("background-color", "buttonface")
+    $(".add_label").removeClass("selected")
     $(".specific_label").hide()
     $("#resource_ids").val("")
     chrome.storage.local.set({"resource_ids": ""})
@@ -241,7 +239,7 @@ function clear_input(preserve_text = false) {
         chrome.storage.local.set({"found_cl": ""})
         $("#location").val("")
         chrome.storage.local.set({"location": ""})
-        $("#season_label").css("background-color", "#ACACAC")
+        $("#season_label").addClass("selected")
     }
     
 }
@@ -325,8 +323,8 @@ $("#create_bug").on("click", ()=> {
     })
     // 移除影響query string的符號
     let summary_detail = $("#summary").val().replace("&", "%26").replace("=", "%3D")
-    let issue_type_1 = $(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text().replace("Loc_", "").toUpperCase()
-    let issue_type_2 = $(".issue_type_2[style='background-color: rgb(172, 172, 172);']").text().replace($(".issue_type_1[style='background-color: rgb(172, 172, 172);']").text() + "_", "").replace("_", "/").toUpperCase()
+    let issue_type_1 = $(".issue_type_1.selected").text().replace("Loc_", "").toUpperCase()
+    let issue_type_2 = $(".issue_type_2.selected").text().replace($(".issue_type_1.selected").text() + "_", "").replace("_", "/").toUpperCase()
                        
     let high_priority_type_2 = ["Loc_Arabic_Safe", "Loc_German_Safe", "Loc_Japanese_Safe"]
     high_priority_type_2.forEach(type => {
@@ -433,7 +431,7 @@ async function read_bug_data() {
             $("#release_id").val(bug_data.release_id)
         }
         current_release_id = bug_data.release_id
-        $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()))
+        $("#file_name").val(($("#bug_id").val() + "_" + $("#bug_lng_select option:selected").text() + "_" + $("#bug_type_1").val() + "_" + $("#bug_type_2").val().replace("/", "_") + "_" + $("#release_id").val()).replace("__", "_"))
     }
 }
 read_bug_data()
@@ -454,9 +452,13 @@ $("#release_id").on("input", function() {
     updateFileName()
 })
 // 按下filename複製
-$("#file_name_copy").on("click", () => {
-    navigator.clipboard.writeText($("#file_name").val()).then(() => {
+$("#file_name_copy").on("click", async () => {
+    navigator.clipboard.writeText($("#file_name").val()).then(async () => {
         console.log('Async: Copying to clipboard was successful!');
+        console.log($("#file_name_copy").text)
+        $("#file_name_copy").html('<i class="fa-solid fa-check"></i> ')
+        await new Promise(r => setTimeout(r, 1000))
+        $("#file_name_copy").html('<i class="fa-solid fa-copy"></i>')
     }, function(err) {
         alert('Async: Could not copy text: ', err);
     });
@@ -469,15 +471,15 @@ $(".add_postfix").on("click", (event) => {
     if(reg.test(str)){
         if(str.substring(str.length - 2) == tag){
             $("#file_name").val(str.substring(0, str.length - 2))
-            $(".add_postfix").css("background-color", "buttonface")
+            $(".add_postfix").removeClass("selected")
         }else{
             $("#file_name").val(str.substring(0, str.length - 2) + tag)
-            $(".add_postfix").css("background-color", "buttonface")
-            $(event.target).css("background-color", "#ACACAC")
+            $(".add_postfix").removeClass("selected")
+            $(event.target).addClass("selected")
         }
     }else{
         $("#file_name").val(str + tag)
-        $(event.target).css("background-color", "#ACACAC")
+        $(event.target).addClass("selected")
     }
 })
 
@@ -485,6 +487,7 @@ $(".add_postfix").on("click", (event) => {
 // Xloc Page //
 ///////////////
 let color_dict, color_codes = null
+let emoji_dict, emoji_codes = null
 
 // 從color_code.json讀取資料
 fetch("../data/color_code.json").then(response => {
@@ -492,6 +495,16 @@ fetch("../data/color_code.json").then(response => {
 }).then(data => {
     color_dict = data
     color_codes = Object.keys(color_dict)
+}).catch(err => {
+    console.log("Error while fetching color_code.json: ", err)
+})
+
+// 從emoji_code.json讀取資料
+fetch("../data/emoji_code.json").then(response => {
+    if(response.ok) {return response.json()}
+}).then(data => {
+    emoji_dict = data
+    emoji_codes = Object.keys(emoji_dict)
 }).catch(err => {
     console.log("Error while fetching color_code.json: ", err)
 })
@@ -508,25 +521,29 @@ $("#light_bg").change(function() {
 
 // 將color code轉成顏色
 function convert_to_colored_string() {
-    console.log("Converting to colored string")
     let color_code_string = $("#color_code_string").val()
-    if(color_codes.some(color_code => color_code_string.includes(color_code))) {
-        color_code_string = color_code_string.replaceAll("\\n", "<br>") // 換行符號改成html使用的
-        color_code_string = color_code_string.replaceAll("[{ui_font_bullet_point}]", "<span style=\"font-size: 30px\">&#8226;</span>") // 項目符號改成html使用的
-        color_code_string = color_code_string.replaceAll("[{ui_codpoints}]", "&#128176;") // coin
-        color_code_string = color_code_string.replaceAll("[{ui_lock}]", "&#128274;") // lock
-        color_codes.map(function(element) { // 把color code逐一檢查
-            if(color_code_string.includes(element)) {
-                color_code_string = color_code_string.replaceAll(element, "</span><span style=\"color: " + color_dict[element] + "\">")
-            }
-        })
-        color_code_string = color_code_string.replace("</span>", "") // 把第一個多加的</span>去掉
-        color_code_string = color_code_string + "</span>" // 把最後少加的</span>加回去
-        $("#colored_string").empty()
-        $("#colored_string").append(color_code_string)
-    }else{
-        $("#colored_string").empty()
-        $("#colored_string").append("<span style='color: red; font-weight: bolder;'>Color code Error!<span>")
+    
+    // 把color code逐一檢查
+    color_codes.map(function(element) {
+        if(color_code_string.includes(element)) {
+            color_code_string = color_code_string.replaceAll(element, "</span><span style=\"color: " + color_dict[element] + "\">")
+        }
+    })
+    color_code_string = color_code_string.replace("</span>", "") // 把第一個多加的</span>去掉
+    color_code_string = color_code_string + "</span>" // 把最後少加的</span>加回去
+    // emoji code逐一檢查
+    emoji_codes.map(function(element) {
+        if(color_code_string.includes(element)) {
+            console.log(element)
+            console.log(emoji_dict[element])
+            color_code_string = color_code_string.replaceAll(element, emoji_dict[element])
+        }
+    })
+    $("#colored_string").empty()
+    $("#colored_string").append(color_code_string)
+    // 如果沒偵測到color code 提醒一下
+    if(!color_codes.some(color_code => $("#color_code_string").val().includes(color_code))) {
+        $("#colored_string").append("<br><span style='color: red; font-weight: bolder;'>No Color code detected!</span>")
     }
 }
 $("#translation_contrast").on("click", () => {
@@ -545,6 +562,11 @@ $("#clear_search").on("click", () => {
 // Profile Tab //
 ////////////////
 
+chrome.storage.local.get("theme").then((result) => {
+    $("#" + result["theme"]).attr('selected','selected')
+    // 初始化布景主題
+    applyTheme($("#theme option:selected").val())
+})
 chrome.storage.local.get("profile_lng").then((result) => {
     $("#" + result["profile_lng"]).attr('selected','selected')
 })
@@ -557,8 +579,40 @@ $("#profile_lng").change(() => {
 $("#profile_username").on("input", function() {
     chrome.storage.local.set({"profile_username": $("#profile_username").val()})
 })
-
+$("#theme").change(() => {
+    chrome.storage.local.set({"theme": $("#theme option:selected").val()})
+    applyTheme($("#theme option:selected").val())
+})
 $("#check_username").on("click", function() {
     chrome.tabs.create({url: "https://dev.activision.com/jira/secure/ViewProfile.jspa"})
     return false
 })
+
+// 應用佈景主題
+function applyTheme(theme) {
+    fetch("../data/theme_" + theme + ".json").then(response => {
+        if(response.ok) {return response.json()}
+    }).then(data => {
+        for(key in data) {
+            let tag = key.split("_")[0].split(":")[0]
+            let style_name = key.split("_")[1]
+            let style = data[key]
+            if(key.includes("hover")) {
+                let toggleClass = tag.split("+")[1]
+                tag = tag.split("+")[0]
+                $(tag).hover(function(){
+                    $(this).css(style_name, style[0])
+                }, function(){
+                    $(this).hasClass(toggleClass) ? $(this).css(style_name, style[0]) : $(this).css(style_name, style[1])
+                })
+            }else if(key.includes("click")) {
+                $(tag).click(function() {
+                    $(tag).css(style_name, style[1]) // 先把所有的變成沒選擇的顏色
+                    $(this).css(style_name, style[0]) // 把有選擇的上色
+                })
+            }else{
+                $(tag).css(style_name, style)
+            }
+        }
+    })
+}

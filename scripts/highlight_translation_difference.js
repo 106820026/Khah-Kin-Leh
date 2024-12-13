@@ -2244,24 +2244,26 @@ if(contrast_strings.length == 0){
                 table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML = table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.betterReplace(item[1], replacement, translation_pointer)
                 translation_pointer = table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.indexOf(replacement, translation_pointer) + replacement.length
             }else if(item[0] === 1) {
-                table_data[total_col*i + prev_translation_col].innerHTML = table_data[total_col*i + prev_translation_col].innerHTML.betterReplace(item[1], replacement, prev_translation_pointer)
-                prev_translation_pointer = table_data[total_col*i + prev_translation_col].innerHTML.indexOf(replacement, prev_translation_pointer) + replacement.length
+                console.log(item[1])
+                console.log(table_data[total_col*i + prev_translation_col].innerHTML)
+                table_data[total_col*i + prev_translation_col].querySelector("div.xloc_FormatForHTML").innerHTML = table_data[total_col*i + prev_translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.betterReplace(item[1], replacement, prev_translation_pointer)
+                prev_translation_pointer = table_data[total_col*i + prev_translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.indexOf(replacement, prev_translation_pointer) + replacement.length
             }
         })
         translation_pointer = 0
         prev_translation_pointer = 0
     }
 }else {
-    for(let i = 0; i < total_record; i++) {
-        curr = table_data[total_col*i + translation_col].textContent
-        prev = table_data[total_col*i + prev_translation_col].textContent
-        d_m_p.diff_main(curr, prev).forEach(item => {
-            replacement = "<span class=\"ivy_add\" style=\"background:LightGreen; color:DarkGreen\">" + item[1] + "</span>"
-            if(item[0] === -1) {
-              table_data[total_col*i + translation_col].innerHTML = table_data[total_col*i + translation_col].innerHTML.replace(replacement, item[1])
-            }else if(item[0] === 1) {
-              table_data[total_col*i + prev_translation_col].innerHTML = table_data[total_col*i + prev_translation_col].innerHTML.replace(replacement, item[1])
-            }
-    })
-}
+      for(let i = 0; i < total_record; i++) {
+          curr = table_data[total_col*i + translation_col].textContent.trim()
+          prev = table_data[total_col*i + prev_translation_col].textContent.trim()
+          d_m_p.diff_main(curr, prev).forEach(item => {
+              replacement = "<span class=\"ivy_add\" style=\"background:LightGreen; color:DarkGreen\">" + item[1] + "</span>"
+              if(item[0] === -1) {
+                table_data[total_col*i + translation_col].innerHTML = table_data[total_col*i + translation_col].innerHTML.replace(replacement, item[1])
+              }else if(item[0] === 1) {
+                table_data[total_col*i + prev_translation_col].innerHTML = table_data[total_col*i + prev_translation_col].innerHTML.replace(replacement, item[1])
+              }
+          })
+      }
 }

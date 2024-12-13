@@ -1,0 +1,21 @@
+{
+    "html_background-color": "#222629",
+    "html, a_color": "#b3bbb5",
+    "div.tab_background-color": "#222629",
+    "div.tab_border-color": "#CCC",
+    "label, span_color": "#85c136",
+    "p_color": "#85c136",
+    "button_border-color": "#7a807b",
+    "button_color": "#7a807b",
+    "button_background-color": "#222629",
+    "button.selected_color": "#222629",
+    "button.selected_background-color": "#85c136",
+    "button+selected:hover_background-color": ["#85c136", "#222629"],
+    "button+selected:hover_color": ["#222629", "#7a807b"],
+    "button.tablinks_color": "#CCC",
+    "button.tablinks:hover_color": ["#CCC", "#CCC"],
+    "button.tablinks.active_background-color": "#393d40",
+    "button.tablinks:hover_background-color": ["#393d40", "#222629"],
+    "button.tablinks:click_background-color": ["#393d40", "#222629"],
+    "button.tablinks+active:hover_background-color": ["#393d40", "#222629"]
+}

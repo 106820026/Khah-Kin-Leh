@@ -3,6 +3,17 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2024-12-13
+1. Finish taco theme
+2. Make the selection or dropdown same length in profile tab
+# 2024-12-06
+1. Fix Translation Contrast unhighlight bug
+2. Add click copy button feedback
+# 2024-12-05
+1. Add what's new in profile tab
+2. Fix button border and border-radius will change after click
+3. If #color_code_string doesn't contain color code, it will notice user but still present the string
+4. Emoji code now has a separate json file as color code
 # 2024-12-04
 1. Expand the text area in xloc tab
 2. Update tab order to New bug > Naming > XLOC > Profile

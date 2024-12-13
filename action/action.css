@@ -48,33 +48,25 @@ input[type = number] {
     width: 15%;
 }
 
-table {
-    width: -webkit-fill-available
-}
-td {
-    width: 33%;
-    text-align: center;
-    font-size: .75rem;
-}
-td > p.bug {
-    cursor: pointer;
-}
-td > p.bug.focus {
-    background-color: lightgray;
-}
-
-button.add_postfix {
+button {
     border-radius: 3px;
     border: 2px solid #ddd;
+}
+button.selected {
+    background-color: #ACACAC;
 }
 
 #xloc > p#colored_string {
     font-size: large;
-    color: GhostWhite;
+    color: GhostWhite !important;
     background-color: #333333;
 }
 #xloc > p#colored_string > span {
     font-size: inherit;
+}
+
+ol { 
+    padding-left: 1.8em; 
 }
 
 
