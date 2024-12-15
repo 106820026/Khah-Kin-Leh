@@ -23,7 +23,7 @@ $('textarea').on('input', (event) => {
 })
 
 // 從連結下載
-url = "https://sheets.googleapis.com/v4/spreadsheets/1kTTQCl6WuBNwbny4GoBkGBK84V0XnCVY7wgY0IlFsrE/values/A1:B2?key=AIzaSyBQSuRYGNzBxwZFUHqlhZnfhfyZN6YXPnM"
+url = "https://sheets.googleapis.com/v4/spreadsheets/1kTTQCl6WuBNwbny4GoBkGBK84V0XnCVY7wgY0IlFsrE/values/A1:C2?key=AIzaSyBQSuRYGNzBxwZFUHqlhZnfhfyZN6YXPnM"
 function downloadURL(url) {
     var link = document.createElement("a");
     link.href = url;
@@ -55,6 +55,7 @@ fetch("../manifest.json").then(response => {
     }).then(data => {
         latest_version = data.values[1][0] // 版本號
         latest_file = data.values[1][1] // 下載連結
+        update_note = data.values[1][2] // 更新內容
         // 如果版本不同
         if(current_version != latest_version){
             // 只提醒一次
@@ -74,6 +75,8 @@ fetch("../manifest.json").then(response => {
                 console.log($("#version").html())
                 $("#version").html($("#version").html().replace("<i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>", "<i class=\"fa-solid fa-check\"></i>"))
             })
+            $("#update-note").append(update_note)
+            $("#update-note").show()
         }else{
             // 開啟下次更新
             chrome.storage.local.set({"update_request": 1 }).then(() => {})
@@ -203,18 +206,14 @@ $("#resource_ids").change(() => {
 })
 // 蒐集選擇的labels
 $(".add_label").on("click", (event) => {
-    let _label = $(event.target).text() + " " // tag需要加空格避免和其他tag打架
-    if(_label == "Season "){
-        _label = "Loc_S" + $("#season_num").val() + " "
+    if($(event.target).text() == "Season"){
         num_lock = !num_lock
         $("#season_num").prop('disabled', num_lock)
     }
-    if(!jira_labels.includes(_label)) {
-        $(event.target).addClass("selected")
-        jira_labels += _label
-    }else {
+    if($(event.target).hasClass("selected")) {
         $(event.target).removeClass("selected")
-        jira_labels = jira_labels.replace(_label, "")
+    }else {
+        $(event.target).addClass("selected")
     }
 })
 // 打開衍伸的labels(Text, Audio, Subtitle, Telescope)
@@ -224,6 +223,11 @@ $("button.advanced_type").on('click', function() {
     }else{
         $("div." + $(this).text().split("_")[1] + "_specific").hide()
     }
+})
+// Issue type 2防呆機制
+$(".issue_type_2").on("click", function() {
+    $(".issue_type_2").removeClass("selected")
+    $(this).addClass("selected")
 })
 // 清除所有input並更新至local storage
 function clear_input(preserve_text = false) {
@@ -248,6 +252,11 @@ $("#clear_input").on("click", () => {
 })
 // 開啟new bug頁
 $("#create_bug").on("click", ()=> {
+    $("button.add_label.selected").each(function() {
+        let label = $(this).text()
+        if(label == "Season") {label = "Loc_S" + $("#season_num").val()}
+        jira_labels = jira_labels + label + " "
+    })
     let username = $("#profile_username").val()
     let LNG = $("#multi_lng").is(":checked") ? "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA" : $("#profile_lng option:selected").val()
     // 確認基本資料有填寫
@@ -356,11 +365,11 @@ $("#create_bug").on("click", ()=> {
     "*RESOURCE%20ID*%0A" +
     "----%0A" + resource_ids + "%0A%0A%5C%5C%20" +
     "keywords%3A"
-
+    let found_cl = $("#found_cl").val().trim().split("_")[$("#found_cl").val().trim().split("_").length - 1]
     let query_string_url = 
     "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&customfield_10325=10443&customfield_10319=10416" +
     "&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + "&description=" + description +
-    "&assignee=" + username + "&customfield_10307=" + $("#found_cl").val().trim() + priority_query + label_query + level_query + "&reporter=" + username +
+    "&assignee=" + username + "&customfield_10307=" + found_cl + priority_query + label_query + level_query + "&reporter=" + username +
     atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
 
     // 使用Query String在新分頁開啟Log Bug頁
@@ -464,17 +473,17 @@ $("#file_name_copy").on("click", async () => {
     });
 })
 // 按下_1, _2, _3...
-$(".add_postfix").on("click", (event) => {
+$(".postfix").on("click", (event) => {
     let reg = new RegExp('_[0-9]$')
     let tag = $(event.target).text()
     let str = $("#file_name").val()
     if(reg.test(str)){
         if(str.substring(str.length - 2) == tag){
             $("#file_name").val(str.substring(0, str.length - 2))
-            $(".add_postfix").removeClass("selected")
+            $(".postfix").removeClass("selected")
         }else{
             $("#file_name").val(str.substring(0, str.length - 2) + tag)
-            $(".add_postfix").removeClass("selected")
+            $(".postfix").removeClass("selected")
             $(event.target).addClass("selected")
         }
     }else{
@@ -594,8 +603,8 @@ function applyTheme(theme) {
         if(response.ok) {return response.json()}
     }).then(data => {
         for(key in data) {
-            let tag = key.split("_")[0].split(":")[0]
-            let style_name = key.split("_")[1]
+            let tag = key.split("=>")[0].split(":")[0]
+            let style_name = key.split("=>")[1]
             let style = data[key]
             if(key.includes("hover")) {
                 let toggleClass = tag.split("+")[1]
@@ -615,4 +624,9 @@ function applyTheme(theme) {
             }
         }
     })
+    // 彩蛋圖片切換
+    $(".logo").hide()
+    if(theme == "cerberus") {
+        $("#" + theme + "_logo").show()
+    }
 }

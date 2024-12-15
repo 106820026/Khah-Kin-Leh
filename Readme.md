@@ -3,6 +3,13 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2024-12-15
+1. Fix translation contrast in xloc tab when user search translaion and xloc will autimatically highlight the text, I remove it to keep translation contrast work
+2. If user enter whole build number in found cl, it will only extract the number part
+3. Add theme logo picture for some theme
+# 2024-12-14
+1. Mistake-proofing for label in new bug tab
+2. What's new only show when user need to update
 # 2024-12-13
 1. Finish taco theme
 2. Make the selection or dropdown same length in profile tab

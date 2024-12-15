@@ -2231,6 +2231,12 @@ table_head.forEach((col, i) => {
         prev_translation_col = i
     }
 })
+// 若搜尋translation會有xloc自行highlight部分 需要去除
+for(let i = 0; i < total_record; i++){
+    table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").querySelectorAll("span").forEach(span => {
+        table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML = table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").textContent
+    })
+}
 // 為了不取代到錯誤的字串 用point指出目前位置
 translation_pointer = 0
 prev_translation_pointer = 0
@@ -2244,8 +2250,6 @@ if(contrast_strings.length == 0){
                 table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML = table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.betterReplace(item[1], replacement, translation_pointer)
                 translation_pointer = table_data[total_col*i + translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.indexOf(replacement, translation_pointer) + replacement.length
             }else if(item[0] === 1) {
-                console.log(item[1])
-                console.log(table_data[total_col*i + prev_translation_col].innerHTML)
                 table_data[total_col*i + prev_translation_col].querySelector("div.xloc_FormatForHTML").innerHTML = table_data[total_col*i + prev_translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.betterReplace(item[1], replacement, prev_translation_pointer)
                 prev_translation_pointer = table_data[total_col*i + prev_translation_col].querySelector("div.xloc_FormatForHTML").innerHTML.indexOf(replacement, prev_translation_pointer) + replacement.length
             }

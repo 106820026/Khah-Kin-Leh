@@ -81,12 +81,14 @@ ol {
 }
 /* Style the buttons that are used to open the tab content */
 .tab button {
+    width: 24%;
     text-align: center;
     background-color: inherit;
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 10px 10px;
+    padding: 7px 7px;
+    margin: 2.5px 2.5px;
     transition: 0.3s;
 }
 /* Change background color of buttons on hover */

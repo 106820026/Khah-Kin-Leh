@@ -7,7 +7,7 @@
     <body>
         <div class="tab">
             <button id="new_bug_tab" class="tablinks">New Bug</button>
-            <button id="file_naming_tab" class="tablinks">File Naming</button>
+            <button id="file_naming_tab" class="tablinks">File Name</button>
             <button id="xloc_tab" class="tablinks">Xloc</button>
             <button id="profile_tab" class="tablinks">Profile</button>
         </div>
@@ -31,9 +31,9 @@
                 <button class="add_label issue_type_1 advanced_type">Loc_Text</button> <button class="add_label issue_type_1 advanced_type">Loc_Subtitle</button> <button class="add_label issue_type_1 advanced_type">Loc_Audio</button>
                 <button class="add_label">Loc_UI</button> <button class="add_label">Loc_TRG</button> <button class="add_label">Loc_Glossary</button> <button class="add_label advanced_type">Loc_Telescope</button>
                 <p>Safety Issue</p>
-                <button class="add_label issue_type_2">Loc_Arabic_Safe</button> 
-                <button class="add_label issue_type_2">Loc_German_Safe</button> 
-                <button class="add_label issue_type_2">Loc_Japanese_Safe</button>
+                <button class="add_label">Loc_Arabic_Safe</button> 
+                <button class="add_label">Loc_German_Safe</button> 
+                <button class="add_label">Loc_Japanese_Safe</button>
                 <div class="specific_label text_specific" style="display: none;">
                     <p>Issue Type(Text)</p>
                     <button class="add_label issue_type_2">Loc_Text_Amendment</button> <button class="add_label issue_type_2">Loc_Text_Overlap</button>
@@ -94,14 +94,14 @@
                 <button id="file_name_copy" title="Copy"><i class="fa-solid fa-copy"></i></button>
             </div>
             <div class="file_naming_button">
-                <button class="add_postfix" id="plus_1">_1</button>
-                <button class="add_postfix" id="plus_2">_2</button>
-                <button class="add_postfix" id="plus_3">_3</button>
-                <button class="add_postfix" id="plus_4">_4</button>
-                <button class="add_postfix" id="plus_5">_5</button>
-                <button class="add_postfix" id="plus_6">_6</button>
-                <button class="add_postfix" id="plus_7">_7</button>
-                <button class="add_postfix" id="plus_8">_8</button>
+                <button class="postfix" id="plus_1">_1</button>
+                <button class="postfix" id="plus_2">_2</button>
+                <button class="postfix" id="plus_3">_3</button>
+                <button class="postfix" id="plus_4">_4</button>
+                <button class="postfix" id="plus_5">_5</button>
+                <button class="postfix" id="plus_6">_6</button>
+                <button class="postfix" id="plus_7">_7</button>
+                <button class="postfix" id="plus_8">_8</button>
             </div>
         </div>
 
@@ -122,6 +122,7 @@
             <select id="theme" style="width: 70%;">
                 <option id="default" value="default">Default</option>
                 <option id="taco" value="taco">Taco</option>
+                <option id="cerberus" value="cerberus">Cerberus</option>
             </select><br>
             <label for="profile_lng">Loc Language</label>
             <select id="profile_lng" style="width: 70%;">
@@ -142,10 +143,10 @@
             <span for="profile_username">Jira Username</span>
             <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="width: 70%;">
             <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a><br><br>
-            <b>What's New</b>
-            <ol>
-                <li>Add What's New in Profile tab</li>
-            </ol>
+            <div id="update-note" style="display: none;">
+                <b>What's New</b><br>
+            </div>
+            <img id="cerberus_logo" class="logo" src="../data/cerberus.png" style="display: none; position: absolute; right: 0; bottom: 0; width: 30%; z-index: -1; pointer-events: none;">
         </div>
 
         <footer style="display: flex; justify-content: space-between;">
