@@ -125,6 +125,9 @@ function openTab(tabName) {
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
     $("#" + tabName + "_tab").addClass("active")
+    // 如果打開的頁面不是New Bug tab時 無法取得#resource_ids的滾動高度(因為display:none;) 所以每切換一次就讀一次
+    $("#resource_ids").css("height", "1px") // textarea和input的預設大小是19px 看起來比較一致
+    $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 19 ? "51px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
 }
 // 決定目前要開啟的tab
 chrome.storage.local.get("tab").then((result) => {
@@ -197,43 +200,93 @@ chrome.storage.local.get("resource_ids").then((result) => {
         $("#resource_ids").val(result["resource_ids"])
         // 把textarea展開
         $("#resource_ids").css("height", "1px") // textarea和input的預設大小是19px 看起來比較一致
-        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 0 ? "21px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
+        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 19 ? "51px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
     }
 })
 // 當Resource IDs有修改時 上傳localstorage
 $("#resource_ids").change(() => {
     chrome.storage.local.set({"resource_ids": $("#resource_ids").val()})
 })
-// 蒐集選擇的labels
-$(".add_label").on("click", (event) => {
-    if($(event.target).text() == "Season"){
+// 當All Languages有勾時 上傳localstorage
+$("#multi_lng").change(() => {
+    chrome.storage.local.set({"multi_lng": $("#multi_lng").val()})
+})
+// 從localstorage讀All Languages打勾資料
+chrome.storage.local.get("multi_lng").then((result) => {
+    if(result["multi_lng"] != undefined){
+        $("#multi_lng").prop('checked', result["multi_lng"])
+    }
+})
+// 從localstorage讀選擇的label資料
+chrome.storage.local.get("labels").then((result) => {
+    if(result["labels"] != undefined){
+        result["labels"].split(",").forEach((id) => {
+            $("#" + id).addClass("selected")
+        })
+        $("." + $(".add_label.advanced_type.selected").text() + "_specific").show()
+        console.log("." + $(".add_label.advanced_type.selected").text() + "_specific")
+        // 重新渲染顏色
+        applyTheme($("#theme option:selected").val())
+    }else{
+        clear_input()
+    }
+})
+// labels是否有被選擇
+$(".add_label").on("click", function() {
+    if($(this).text() == "Season"){
         num_lock = !num_lock
         $("#season_num").prop('disabled', num_lock)
     }
-    if($(event.target).hasClass("selected")) {
-        $(event.target).removeClass("selected")
+    if($(this).hasClass("game_mode")) { // game mode防呆
+        $(".game_mode").removeClass("selected")
+        $(this).addClass("selected")
+    }else if($(this).hasClass("safety_issue")) { // safety issue防呆
+        $(".safety_issue").removeClass("selected")
+        $(this).addClass("selected")
+    }else if($(this).hasClass("issue_type_1")) { // issue type 1防呆
+        $(".issue_type_1").removeClass("selected")
+        $(this).addClass("selected")
+        $(".issue_type_2").removeClass("selected")
+    }else if($(this).hasClass("issue_type_2")) { // issue type 2防呆
+        $(".issue_type_2").removeClass("selected")
+        $(this).addClass("selected")
+    }else if($(this).hasClass("selected")) {
+        $(this).removeClass("selected")
     }else {
-        $(event.target).addClass("selected")
+        $(this).addClass("selected")
     }
+    // 當label選擇時 上傳localstorage
+    let labels = $('.add_label.selected').map(function () {
+        return this.id;
+    }).get().join().replace("season_label,", "")
+    chrome.storage.local.set({"labels": labels})
 })
 // 打開衍伸的labels(Text, Audio, Subtitle, Telescope)
 $("button.advanced_type").on('click', function() {
-    if($(this).hasClass("selected")) {
-        $("div." + $(this).text().split("_")[1] + "_specific").show()
-    }else{
-        $("div." + $(this).text().split("_")[1] + "_specific").hide()
-    }
-})
-// Issue type 2防呆機制
-$(".issue_type_2").on("click", function() {
-    $(".issue_type_2").removeClass("selected")
-    $(this).addClass("selected")
+    $(".specific_label").hide()
+    $("button.advanced_type.selected").each(function() {
+        $("div." + $(this).val().split("_")[1] + "_specific").show()
+        $("div." + $(this).val().split("_")[1] + "_specific .issue_type_2").first().addClass("selected")
+    })
+    // 當label選擇時 上傳localstorage
+    let labels = $('.add_label.selected').map(function () {
+        return this.id;
+    }).get().join().replace("season_label,", "")
+    chrome.storage.local.set({"labels": labels})
 })
 // 清除所有input並更新至local storage
 function clear_input(preserve_text = false) {
+    // 清除所有欄位
     $(".add_label").removeClass("selected")
     $(".specific_label").hide()
     $("#resource_ids").val("")
+    $("#multi_lng").prop('checked', false)
+    // 選擇預設選項
+    $(".game_mode").first().addClass("selected")
+    $(".issue_type_1").first().addClass("selected")
+    $(".safety_issue").first().addClass("selected")
+    $(".issue_type_2").first().addClass("selected")
+    $(".specific_label").first().show()
     chrome.storage.local.set({"resource_ids": ""})
     jira_labels = ""
     if(!preserve_text) {
@@ -245,7 +298,13 @@ function clear_input(preserve_text = false) {
         chrome.storage.local.set({"location": ""})
         $("#season_label").addClass("selected")
     }
-    
+    // 重新渲染顏色
+    applyTheme($("#theme option:selected").val())
+    // 把預設label上傳localstorage
+    let labels = $('.add_label.selected').map(function () {
+        return this.id;
+    }).get().join().replace("season_label,", "")
+    chrome.storage.local.set({"labels": labels})
 }
 $("#clear_input").on("click", () => {
     clear_input()
@@ -253,9 +312,9 @@ $("#clear_input").on("click", () => {
 // 開啟new bug頁
 $("#create_bug").on("click", ()=> {
     $("button.add_label.selected").each(function() {
-        let label = $(this).text()
+        let label = $(this).val()
         if(label == "Season") {label = "Loc_S" + $("#season_num").val()}
-        jira_labels = jira_labels + label + " "
+        jira_labels = label != "" ? jira_labels + label + " " : ""
     })
     let username = $("#profile_username").val()
     let LNG = $("#multi_lng").is(":checked") ? "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA" : $("#profile_lng option:selected").val()
@@ -617,7 +676,11 @@ function applyTheme(theme) {
             }else if(key.includes("click")) {
                 $(tag).click(function() {
                     $(tag).css(style_name, style[1]) // 先把所有的變成沒選擇的顏色
-                    $(this).css(style_name, style[0]) // 把有選擇的上色
+                    $(tag).each(function() {
+                        if($(this).hasClass("selected")) {
+                            $(this).css(style_name, style[0]) // 把有選擇的上色
+                        }
+                    })
                 })
             }else{
                 $(tag).css(style_name, style)

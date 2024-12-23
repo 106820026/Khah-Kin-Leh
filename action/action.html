@@ -14,60 +14,98 @@
         
         <!-- Tab content -->
         <div id="new_bug" class="tabcontent">
-            <label for="summary">Summary:</label><input id="summary" type="text" autocomplete="off">
+            <div class="divider-container"><div class="divider"></div>&emsp;<b>Bug Info</b>&emsp;<div class="divider"></div></div>
+            <input id="summary" type="text" autocomplete="off" placeholder="Summary">
             <div class="labels">
-                <input type="text" id="found_cl" placeholder="Found CL" style="width: 30%;">
-                <input type="text" id="location" placeholder="Location" style="width: 30%;">
-                <button class="add_label selected" id="season_label">Season</button>
-                <input id="season_num" type="number" min="1" value="1" step=".5">
-                <textarea id="resource_ids" placeholder="Input resource IDs here" rows="1"></textarea>
-                <label style="display: inline-flex; align-items: center;"> 
-                    <input id="multi_lng" type="checkbox" style="flex: none;"> 
-                    Multi-LNG
-                </label>
-                <p>Game Mode</p>
-                <button class="add_label">Loc_SP</button> <button class="add_label">Loc_MP</button> <button class="add_label">Loc_ZM</button> <button class="add_label">Loc_WZ</button>
-                <p>General</p>
-                <button class="add_label issue_type_1 advanced_type">Loc_Text</button> <button class="add_label issue_type_1 advanced_type">Loc_Subtitle</button> <button class="add_label issue_type_1 advanced_type">Loc_Audio</button>
-                <button class="add_label">Loc_UI</button> <button class="add_label">Loc_TRG</button> <button class="add_label">Loc_Glossary</button> <button class="add_label advanced_type">Loc_Telescope</button>
-                <p>Safety Issue</p>
-                <button class="add_label">Loc_Arabic_Safe</button> 
-                <button class="add_label">Loc_German_Safe</button> 
-                <button class="add_label">Loc_Japanese_Safe</button>
+                <input id="found_cl" type="text" autocomplete="off" placeholder="Found CL">
+                <input id="location" type="text" autocomplete="off" placeholder="Location">
+                <div style="display: flex; justify-content: space-between;">
+                    <div style="width: 40%;">
+                        <button class="add_label selected" id="season_label" value="Season">Season</button>
+                        <input id="season_num" type="number" min="1" value="1" step=".5">
+                    </div>
+                    <label style="display: inline-flex; align-items: center;"> 
+                        <input id="multi_lng" type="checkbox" style="flex: none;"> 
+                        All Languages
+                    </label>
+                </div>
+                <div class="divider-container"><div class="divider"></div>&emsp;<b>Game Mode</b>&emsp;<div class="divider"></div></div>
+                <button class="add_label game_mode" id="Loc_Global" value="">Global</button> 
+                <button class="add_label game_mode" id="Loc_SP" value="Loc_SP">SP</button> 
+                <button class="add_label game_mode" id="Loc_MP" value="Loc_MP">MP</button> 
+                <button class="add_label game_mode" id="Loc_ZM" value="Loc_ZM">ZM</button> 
+                <button class="add_label game_mode" id="Loc_WZ" value="Loc_WZ">WZ</button>
+                <div class="divider-container"><div class="divider"></div>&emsp;<b>Bug Type</b>&emsp;<div class="divider"></div></div>
+                <button class="add_label issue_type_1 advanced_type" id="Loc_Text" value="Loc_Text">Text</button> 
+                <button class="add_label issue_type_1 advanced_type" id="Loc_Subtitle" value="Loc_Subtitle">Subtitle</button> 
+                <button class="add_label issue_type_1 advanced_type" id="Loc_Audio" value="Loc_Audio">Audio</button> 
+                <button class="add_label" id="Loc_UI" value="Loc_UI">UI</button> 
+                <button class="add_label" id="Loc_TRG" value="Loc_TRG">TRG</button> 
+                <button class="add_label" id="Loc_Glossary" value="Loc_Glossary">Glossary</button> 
+                <button class="add_label advanced_type" id="Loc_Telescope" value="Loc_Telescope">Telescope</button>
                 <div class="specific_label text_specific" style="display: none;">
-                    <p>Issue Type(Text)</p>
-                    <button class="add_label issue_type_2">Loc_Text_Amendment</button> <button class="add_label issue_type_2">Loc_Text_Overlap</button>
-                    <button class="add_label issue_type_2">Loc_Text_Consistency</button> <button class="add_label issue_type_2">Loc_Text_Context</button>
-                    <button class="add_label issue_type_2">Loc_Text_Truncation</button> <button class="add_label issue_type_2">Loc_Text_Font_Size</button>
-                    <button class="add_label issue_type_2">Loc_Text_Alignment</button> <button class="add_label issue_type_2">Loc_Text_Graphic</button>
-                    <button class="add_label issue_type_2">Loc_Text_Not_Translated</button> <button class="add_label issue_type_2">Loc_Text_Integration</button>
-                    <button class="add_label issue_type_2">Loc_Text_Spelling_Grammar</button> <button class="add_label issue_type_2">Loc_Text_Missing</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Text Issue Type</b>&emsp;<div class="divider"></div></div>
+                    <button class="add_label issue_type_2" id="Loc_Text_Amendment" value="Loc_Text_Amendment">Amendment</button> 
+                    <button class="add_label issue_type_2" id="Loc_Text_Overlap" value="Loc_Text_Overlap">Overlap</button>
+                    <button class="add_label issue_type_2" id="Loc_Text_Consistency" value="Loc_Text_Consistency">Consistency</button> 
+                    <button class="add_label issue_type_2" id="Loc_Text_Context" value="Loc_Text_Context">Context</button>
+                    <button class="add_label issue_type_2" id="Loc_Text_Truncation" value="Loc_Text_Truncation">Truncation</button> 
+                    <button class="add_label issue_type_2" id="Loc_Text_Font_Size" value="Loc_Text_Font_Size">Font Size</button>
+                    <button class="add_label issue_type_2" id="Loc_Text_Alignment" value="Loc_Text_Alignment">Alignment</button> 
+                    <button class="add_label issue_type_2" id="Loc_Text_Graphic" value="Loc_Text_Graphic">Graphic</button>
+                    <button class="add_label issue_type_2" id="Loc_Text_Not_Translated" value="Loc_Text_Not_Translated">Not Translated</button> 
+                    <button class="add_label issue_type_2" id="Loc_Text_Integration" value="Loc_Text_Integration">Integration</button>
+                    <button class="add_label issue_type_2" id="Loc_Text_Spelling_Grammar" value="Loc_Text_Spelling_Grammar">Spelling Grammar</button> 
+                    <button class="add_label issue_type_2" id="Loc_Text_Missing" value="Loc_Text_Missing">Missing</button>
                 </div>
                 <div class="specific_label subtitle_specific" style="display: none;">
-                    <p>Issue Type(Subtitle)</p>
-                    <button class="add_label issue_type_2">Loc_Subtitle_Amendment</button> <button class="add_label issue_type_2">Loc_Subtitle_Overlap</button>
-                    <button class="add_label issue_type_2">Loc_Subtitle_Consistency</button> <button class="add_label issue_type_2">Loc_Subtitle_Context</button>
-                    <button class="add_label issue_type_2">Loc_Subtitle_Truncation</button> <button class="add_label issue_type_2">Loc_Subtitle_Font_Size</button>
-                    <button class="add_label issue_type_2">Loc_Subtitle_Alignment</button> <button class="add_label issue_type_2">Loc_Subtitle_Mismatch</button>
-                    <button class="add_label issue_type_2">Loc_Subtitle_Integration</button> <button class="add_label issue_type_2">Loc_Subtitle_Missing</button>
-                    <button class="add_label issue_type_2">Loc_Subtitle_Not_Translated</button> <button class="add_label issue_type_2">Loc_Subtitle_Spelling_Grammar</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Subtitle Issue Type</b>&emsp;<div class="divider"></div></div>
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Amendment" value="Loc_Subtitle_Amendment">Amendment</button> 
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Overlap" value="Loc_Subtitle_Overlap">Overlap</button>
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Consistency" value="Loc_Subtitle_Consistency">Consistency</button> 
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Context" value="Loc_Subtitle_Context">Context</button>
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Truncation" value="Loc_Subtitle_Truncation">Truncation</button> 
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Font_Size" value="Loc_Subtitle_Font_Size">Font Size</button>
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Alignment" value="Loc_Subtitle_Alignment">Alignment</button> 
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Mismatch" value="Loc_Subtitle_Mismatch">Mismatch</button>
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Integration" value="Loc_Subtitle_Integration">Integration</button> 
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Missing" value="Loc_Subtitle_Missing">Missing</button>
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Not_Translated" value="Loc_Subtitle_Not_Translated">Not Translated</button> 
+                    <button class="add_label issue_type_2" id="Loc_Subtitle_Spelling_Grammar" value="Loc_Subtitle_Spelling_Grammar">Spelling Grammar</button>
                 </div>
                 <div class="specific_label audio_specific" style="display: none;">
-                    <p>Issue Type(Audio)</p>
-                    <button class="add_label issue_type_2">Loc_Audio_Consistency</button> <button class="add_label issue_type_2">Loc_Audio_Context</button>
-                    <button class="add_label issue_type_2">Loc_Audio_Cut</button> <button class="add_label issue_type_2">Loc_Audio_Missing</button>
-                    <button class="add_label issue_type_2">Loc_Audio_Not_Translated</button> <button class="add_label issue_type_2">Loc_Audio_Overlap</button>
-                    <button class="add_label issue_type_2">Loc_Audio_SFX</button> <button class="add_label issue_type_2">Loc_Audio_Volume</button>
-                    <button class="add_label issue_type_2">Loc_Audio_Text_Integration</button> <button class="add_label issue_type_2">Loc_Audio_Sync</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Audio Issue Type</b>&emsp;<div class="divider"></div></div>
+                    <button class="add_label issue_type_2" id="Loc_Audio_Consistency" value="Loc_Audio_Consistency">Consistency</button> 
+                    <button class="add_label issue_type_2" id="Loc_Audio_Context" value="Loc_Audio_Context">Context</button>
+                    <button class="add_label issue_type_2" id="Loc_Audio_Cut" value="Loc_Audio_Cut">Cut</button> 
+                    <button class="add_label issue_type_2" id="Loc_Audio_Missing" value="Loc_Audio_Missing">Missing</button>
+                    <button class="add_label issue_type_2" id="Loc_Audio_Not_Translated" value="Loc_Audio_Not_Translated">Not Translated</button> 
+                    <button class="add_label issue_type_2" id="Loc_Audio_Overlap" value="Loc_Audio_Overlap">Overlap</button>
+                    <button class="add_label issue_type_2" id="Loc_Audio_SFX" value="Loc_Audio_SFX">SFX</button> 
+                    <button class="add_label issue_type_2" id="Loc_Audio_Volume" value="Loc_Audio_Volume">Volume</button>
+                    <button class="add_label issue_type_2" id="Loc_Audio_Text_Integration" value="Loc_Audio_Text_Integration">Text Integration</button> 
+                    <button class="add_label issue_type_2" id="Loc_Audio_Sync" value="Loc_Audio_Sync">Sync</button>
                 </div>
                 <div class="specific_label telescope_specific" style="display: none;">
-                    <p>Issue Type(Telescope)</p>
-                    <button class="add_label">Loc_Telescope</button> <button class="add_label">Telescope</button> <button class="add_label">telescope</button>
-                    <button class="add_label">CER<span style="color: DarkOrange;">MP</span>LB</button> <button class="add_label">CER<span style="color: DarkOrange;">ZM</span>LB</button> 
-                    <button class="add_label">CERResurgLB</button><button class="add_label">CEREntryTEL</button> <button class="add_label">CEREntryS1</button> <button class="add_label">CERMOTD</button>
-                    <button class="add_label">CEREULA</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Telescope Issue Type</b>&emsp;<div class="divider"></div></div>
+                    <button class="add_label" id="Loc_Telescope" value="Loc_Telescope">Loc Telescope</button> 
+                    <button class="add_label" id="Telescope" value="Telescope">Telescope</button> 
+                    <button class="add_label" id="telescope" value="telescope">telescope</button>
+                    <button class="add_label" id="CERMPLB" value="CERMPLB">CER<span style="color: DarkOrange;">MP</span>LB</button> 
+                    <button class="add_label" id="CERZMLB" value="CERZMLB">CER<span style="color: DarkOrange;">ZM</span>LB</button> 
+                    <button class="add_label" id="CERResurgLB" value="CERResurgLB">CERResurgLB</button> 
+                    <button class="add_label" id="CEREntryTEL" value="CEREntryTEL">CEREntryTEL</button> 
+                    <button class="add_label" id="CEREntryS1" value="CEREntryS1">CEREntryS1</button>
+                    <button class="add_label" id="CERMOTD" value="CERMOTD">CERMOTD</button> 
+                    <button class="add_label" id="CEREULA" value="CEREULA">CEREULA</button>
                 </div>
+                <div class="divider-container"><div class="divider"></div>&emsp;<b>Safety</b>&emsp;<div class="divider"></div></div>
+                <button class="add_label safety_issue" id="Loc_X_Safe" value="">&emsp;X&emsp;</button> 
+                <button class="add_label safety_issue" id="Loc_Arabic_Safe" value="Loc_Arabic_Safe">Arabic</button> 
+                <button class="add_label safety_issue" id="Loc_German_Safe" value="Loc_German_Safe">German</button> 
+                <button class="add_label safety_issue" id="Loc_Japanese_Safe" value="Loc_Japanese_Safe">Japanese</button>
             </div>
+            <textarea id="resource_ids" placeholder="Paste resource IDs here."></textarea>
             <div style="display: flex; justify-content: center; margin-top: 8px;">
                 <button id="clear_input">CLEAR All</button>&emsp;<button id="create_bug">Create Bug</button>
             </div>
@@ -118,7 +156,7 @@
         </div>
 
         <div id="profile" class="tabcontent">
-            <label for="theme">&nbsp;&nbsp;&emsp;Theme&nbsp;&nbsp;&emsp;</label>
+            <label for="theme">&emsp;&nbsp;&nbsp;Theme&emsp;&nbsp;&nbsp;</label>
             <select id="theme" style="width: 70%;">
                 <option id="default" value="default">Default</option>
                 <option id="taco" value="taco">Taco</option>

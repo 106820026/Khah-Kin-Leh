@@ -21,6 +21,6 @@
     "button.tablinks:click=>background-color": ["#f96503", "#2b2b2b"],
     "button.tablinks+active:hover=>background-color": ["#f96503", "#2b2b2b"],
     "button.tablinks+active:hover=>color": ["#131313", "#ccc"],
-    "button.postfix, button.issue_type_2:click=>background-color": ["#f96503", "#2b2b2b"],
-    "button.postfix, button.issue_type_2:click=>color": ["#131313", "#ccc"]
+    "button.postfix, button.safety_issue, button.game_mode, button.issue_type_1, button.issue_type_2:click=>background-color": ["#f96503", "#2b2b2b"],
+    "button.postfix, button.safety_issue, button.game_mode, button.issue_type_1, button.issue_type_2:click=>color": ["#131313", "#ccc"]
 }
