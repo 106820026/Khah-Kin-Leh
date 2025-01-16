@@ -3,6 +3,8 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2025-01-16
+1. Auto detect branch and fill in template
 # 2025-01-05
 1. Add fix version in new bug tab
 2. Summary text area will grow if user input more than 1 line
