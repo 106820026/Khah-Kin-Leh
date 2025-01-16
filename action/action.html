@@ -14,9 +14,9 @@
 
         <!-- Tabs -->
         <div class="tab" style="padding: 4px 10px 4px 25px; margin-top: 0;">
-            <button id="new_bug_tab" class="tablinks">New bug</button>
+            <button id="new_bug_tab" class="tablinks">Bug template</button>
             <button id="file_naming_tab" class="tablinks">File name</button>
-            <button id="xloc_tab" class="tablinks" style="margin-left: 20%;">Xloc</button>
+            <button id="xloc_tab" class="tablinks" style="margin-left: 5%;">Xloc</button>
         </div>
         
         <!-- Tab content -->
@@ -24,22 +24,22 @@
             <div class="divider-container" style="margin-top: 0;"><div class="divider"></div>&emsp;<b>Bug info</b>&emsp;<div class="divider"></div></div>
             <textarea id="summary" type="text" autocomplete="off" placeholder="Summary" rows="1"></textarea>
             <div class="labels">
-                <input id="location" type="text" autocomplete="off" placeholder="Location">
+                <input id="location" type="text" autocomplete="off" placeholder="Area">
                 <div style="position: relative;">
                     <input id="found_cl" type="text" autocomplete="off" placeholder="Found CL">
-                    <i class="fa-solid fa-lock input-text-lock unlock" id="found-cl-lock"></i>
+                    <i class="fa-solid fa-lock-open input-text-lock" id="found-cl-lock"></i>
                 </div>
                 <div style="position: relative;">
                     <input id="fix_version" type="text" autocomplete="off" placeholder="Fix Version">
-                    <i class="fa-solid fa-lock input-text-lock unlock" id="fix-version-lock"></i>
+                    <i class="fa-solid fa-lock-open input-text-lock" id="fix-version-lock"></i>
                 </div>
                 <div class="button-container">
-                    <div style="width: 50%; display: inline-block;">
+                    <div style="width: 50%; display: inline-block;" title="Add season label">
                         <input class="add_label" id="season_label" type="checkbox" style="vertical-align: middle;" checked>Season
-                        <input id="season_num" type="number" min="1" value="1" step=".5" style="vertical-align: middle;">
-                        <i class="fa-solid fa-lock unlock" id="season-lock"></i>
+                        <input id="season_num" type="number" min="1" value="1" step=".5" title="Edit season" style="vertical-align: middle;">
+                        <i class="fa-solid fa-lock-open" id="season-lock"></i>
                     </div>
-                    <label style="display: inline-flex; align-items: center;"> 
+                    <label style="display: inline-flex; align-items: center;" title="Create multi-language template"> 
                         <input id="multi_lng" type="checkbox" style="flex: none;"> 
                         All Languages
                     </label>
@@ -161,7 +161,7 @@
             <label for="bug_type_2">Issue type<input type="text" id="bug_type_2" placeholder="ლ⁠(⁠´⁠ ⁠❥⁠ ⁠`⁠ლ⁠)" value="" disabled/></label>
             <div style="position: relative;">
                 <label for="release_id">Release ID<input type="text" id="release_id" placeholder="(⁠･ั⁠ω⁠･ั⁠)" value="" autocomplete="off"/></label>
-                <i class="fa-solid fa-lock input-text-lock unlock" id="regression_lock" title="Lock this ID"></i>
+                <i class="fa-solid fa-lock-open input-text-lock" id="regression_lock" title="Lock this ID"></i>
             </div>
             <p style="text-align: center; margin: 15px auto;">
                 <svg width="100" height="12.5">
@@ -242,7 +242,7 @@
         <footer>
             <i id="setting" class="fas fa-cog"></i>
             <div id="new_bug_action_button" style="display: none;">
-                <p id="reset_all" style="margin: auto 0; cursor: pointer;">Reset all</p>&emsp;<button id="create_bug">Create bug</button>
+                <p id="reset_all" style="margin: auto 0; cursor: pointer;">Reset all</p>&emsp;<button id="create_bug">Create template</button>
             </div>
         </footer>
         <script src="action.js"></script>

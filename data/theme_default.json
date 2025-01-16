@@ -1,7 +1,7 @@
 {
     "html, div#setting_window=>background-color": "#fff",
     "html, a=>color": "#494949",
-    "div.tab=>background-color": "#f1f1f1",
+    "div.tab=>background-color": "#ddd",
     "label, span, p=>color": "#494949",
     "#file_naming label=>color": "#B9B9B9",
     "button=>border-color": "#606060",
@@ -19,5 +19,6 @@
     "button.tablinks:click=>background-color": ["#ccc", "#f1f1f1"],
     "button.tablinks+selected:hover=>background-color": ["#ccc", "#f1f1f1"],
     "button.postfix, button.safety_issue, button.game_mode, button.issue_type_1, button.issue_type_2:click=>background-color": ["#acacac", "#f1f1f1"],
-    "button.postfix, button.safety_issue, button.game_mode, button.issue_type_1, button.issue_type_2:click=>color": ["#494949", "#494949"]
+    "button.postfix, button.safety_issue, button.game_mode, button.issue_type_1, button.issue_type_2:click=>color": ["#494949", "#494949"],
+    "input[type='checkbox']:checked=>--after-color": "#000"
 }

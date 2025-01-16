@@ -182,7 +182,7 @@ chrome.storage.local.get("found_cl_lock").then((result) => {
         // true->鎖上
         if(result["found_cl_lock"]) {
             founc_cl_lock = true
-            $("#found-cl-lock").removeClass("unlock")
+            $("#found-cl-lock").removeClass("fa-lock-open").addClass("fa-lock")
             $("#found_cl").prop('disabled', founc_cl_lock)
         }
     }
@@ -213,7 +213,7 @@ chrome.storage.local.get("fix_version_lock").then((result) => {
         // true->鎖上
         if(result["fix_version_lock"]) {
             fix_version_lock = true
-            $("#fix-version-lock").removeClass("unlock")
+            $("#fix-version-lock").removeClass("fa-lock-open").addClass("fa-lock")
             $("#fix_version").prop('disabled', fix_version_lock)
         }
     }
@@ -244,7 +244,7 @@ chrome.storage.local.get("season_lock").then((result) => {
         // true->鎖上
         if(result["season_lock"]) {
             season_lock = true
-            $("#season-lock").removeClass("unlock")
+            $("#season-lock").removeClass("fa-lock-open").addClass("fa-lock")
             $("#season_label").prop('disabled', season_lock)
             $("#season_num").prop('disabled', season_lock)
         }
@@ -292,27 +292,27 @@ chrome.storage.local.get("labels").then((result) => {
 $("#found-cl-lock").on("click", function() {
     founc_cl_lock = !founc_cl_lock
     console.log(founc_cl_lock)
-    founc_cl_lock ? $("#found-cl-lock").removeClass("unlock"):  $("#found-cl-lock").addClass("unlock")
+    founc_cl_lock ? $("#found-cl-lock").removeClass("fa-lock-open").addClass("fa-lock"):  $("#found-cl-lock").removeClass("fa-lock").addClass("fa-lock-open")
     $("#found_cl").prop('disabled', founc_cl_lock)
     // Found CL lock上傳localstorage
-    chrome.storage.local.set({"found_cl_lock": !$("#found-cl-lock").hasClass("unlock")})
+    chrome.storage.local.set({"found_cl_lock": !$("#found-cl-lock").hasClass("fa-lock-open")})
 })
 // Fix version是否鎖定
 $("#fix-version-lock").on("click", function() {
     fix_version_lock = !fix_version_lock
-    fix_version_lock ? $("#fix-version-lock").removeClass("unlock") :  $("#fix-version-lock").addClass("unlock")
+    fix_version_lock ? $("#fix-version-lock").removeClass("fa-lock-open").addClass("fa-lock") :  $("#fix-version-lock").removeClass("fa-lock").addClass("fa-lock-open")
     $("#fix_version").prop('disabled', fix_version_lock)
     // Fix version lock上傳localstorage
-    chrome.storage.local.set({"fix_version_lock": !$("#fix-version-lock").hasClass("unlock")})
+    chrome.storage.local.set({"fix_version_lock": !$("#fix-version-lock").hasClass("fa-lock-open")})
 })
 // Season是否鎖定
 $("#season-lock").on("click", function() {
     season_lock = !season_lock
-    season_lock ? $("#season-lock").removeClass("unlock") :  $("#season-lock").addClass("unlock")
+    season_lock ? $("#season-lock").removeClass("fa-lock-open").addClass("fa-lock") :  $("#season-lock").removeClass("fa-lock").addClass("fa-lock-open")
     $("#season_label").prop('disabled', season_lock)
     $("#season_num").prop('disabled', season_lock)
     // Season lock上傳localstorage
-    chrome.storage.local.set({"season_lock": !$("#season-lock").hasClass("unlock")})
+    chrome.storage.local.set({"season_lock": !$("#season-lock").hasClass("fa-lock-open")})
 })
 // labels是否有被選擇
 $(".add_label").on("click", function() {
@@ -374,15 +374,15 @@ function reset_all() {
     $(".specific_label").first().show()
     jira_labels = ""
     //檢查有無上鎖部分
-    if($("#found-cl-lock").hasClass("unlock")) {
+    if($("#found-cl-lock").hasClass("fa-lock-open")) {
         $("#found_cl").val("")
         chrome.storage.local.set({"found_cl": ""})
     }
-    if($("#fix-version-lock").hasClass("unlock")) {
+    if($("#fix-version-lock").hasClass("fa-lock-open")) {
         $("#fix_version").val("")
         chrome.storage.local.set({"fix_version": ""})
     }
-    if($("#season-lock").hasClass("unlock")) {
+    if($("#season-lock").hasClass("fa-lock-open")) {
         $("#season_label").prop("checked", true)
         chrome.storage.local.set({"season_label": "true"})
     }
@@ -407,7 +407,7 @@ $("#create_bug").on("click", ()=> {
     let LNG = $("#multi_lng").is(":checked") ? "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA" : $("#profile_lng option:selected").val()
     // 確認基本資料有填寫
     if(username == ""){
-        alert("Please Enter the username in Profile Tab and Check if the Language is Correct!")
+        alert("Please enter jira username in setting and Check if the loc language is correct!")
         return
     }
     let area = "Global", level_query = "&customfield_10306=30237&customfield_10360=10814", 
@@ -444,7 +444,7 @@ $("#create_bug").on("click", ()=> {
         label_query = label_query.replace("&labels=Loc_" + LNG, "")
     }
     if($("#season_label").is(":checked")) {
-        label_query = label_query + " &labels=Season_S" + $("#season_num").val()
+        label_query = label_query + " &labels=Loc_S" + $("#season_num").val()
     }
     let atvi_type_query = jira_labels.includes("Audio") ? "&customfield_10364=11338" : "&customfield_10364=11351"
     let atvi_type = {
@@ -519,12 +519,22 @@ $("#create_bug").on("click", ()=> {
     "*RESOURCE%20ID*%0A" +
     "----%0A" + resource_ids + "%0A%0A%5C%5C%20" +
     "keywords%3A " + "%28%E2%81%A0%E2%97%8F%E2%81%A0%E2%80%99%E2%81%A03%E2%81%A0%29%E2%81%A0" + "%7B%2A%7D%7Bcolor%3A%23DE350B%7DAdd keywords%21%7Bcolor%7D%7B%2A%7D" + "%E2%81%A0%28%E2%81%A0%CE%B5%E2%81%A0%60%E2%81%A0%E2%97%8F%E2%81%A0%29" + "%0A"
-    let found_cl = $("#found_cl").val().trim().split("_")[$("#found_cl").val().trim().split("_").length - 1]
+    let branch_type = {
+        "trunk": "31905", "release": "31907", "cert": "31908", "etu": "35601"
+    }
+    let branch_found_cl = $("#found_cl").val().trim().split("_")
+    let branch = found_cl = ""
+    if(branch_found_cl.length == 2) {
+        branch = branch_type[branch_found_cl[0].toLowerCase()]
+        found_cl = branch_found_cl[1]
+    }else{
+        found_cl = branch_found_cl[0]
+    }
     let query_string_url = 
     "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&fixVersions=" + fix_version_id[fix_version] + 
     "&customfield_10325=10443&customfield_10319=10416&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + 
-    "&description=" + description + "&assignee=" + username + "&customfield_10307=" + found_cl + priority_query + label_query + level_query + "&reporter=" + username +
-    atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
+    "&description=" + description + "&assignee=" + username + "&customfield_10307=" + found_cl + "&customfield_10604=" + branch + priority_query + label_query + level_query + 
+    "&reporter=" + username + atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
 
     // 使用Query String在新分頁開啟Log Bug頁
     chrome.tabs.create({url: query_string_url})
@@ -543,10 +553,10 @@ $('#regression_lock').on("click", function() {
     chrome.storage.local.set({"regression_lock": regression_lock})
     if(regression_lock){
         chrome.storage.local.set({"release_id": $("#release_id").val()})
-        $('#regression_lock').removeClass("unlock")
+        $('#regression_lock').removeClass("fa-lock-open").addClass("fa-lock")
     }else{
         $("#release_id").val(current_release_id)
-        $('#regression_lock').addClass("unlock")
+        $('#regression_lock').removeClass("fa-lock").addClass("fa-lock-open")
     }
     // release id是否可輸入
     $("#release_id").prop("disabled", regression_lock)
@@ -556,7 +566,7 @@ $('#regression_lock').on("click", function() {
 chrome.storage.local.get("regression_lock").then((result) => {
     if(result["regression_lock"]){
         regression_lock = true
-        $('#regression_lock').removeClass("unlock")
+        $('#regression_lock').removeClass("fa-lock-open").addClass("fa-lock")
         // release id是否可輸入
         $("#release_id").prop("disabled", regression_lock)
     }
@@ -588,7 +598,7 @@ async function read_bug_data() {
                 $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
             }
         }
-        if(!$("#regression_lock").hasClass("unlock")){
+        if(!$("#regression_lock").hasClass("fa-lock-open")){
             await chrome.storage.local.get("release_id").then((result) => {
                 if(result["release_id"] != undefined){
                     $("#release_id").val(result["release_id"])
