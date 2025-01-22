@@ -314,7 +314,7 @@ $("#create_bug").on("click", ()=> {
     $("button.add_label.selected").each(function() {
         let label = $(this).val()
         if(label == "Season") {label = "Loc_S" + $("#season_num").val()}
-        jira_labels = label != "" ? jira_labels + label + " " : ""
+        jira_labels = jira_labels + label + (label != "" ? " " : "")
     })
     let username = $("#profile_username").val()
     let LNG = $("#multi_lng").is(":checked") ? "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA" : $("#profile_lng option:selected").val()
