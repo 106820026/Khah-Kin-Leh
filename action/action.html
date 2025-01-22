@@ -1,137 +1,178 @@
 <html>
     <head>
+        <meta charset="UTF-8">
         <link rel="stylesheet" href="action.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css"/>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap" rel="stylesheet">
         <script src="jquery-3.7.1.slim.min.js"></script>
     </head>
     <body>
-        <div class="tab">
-            <button id="new_bug_tab" class="tablinks">New Bug</button>
-            <button id="file_naming_tab" class="tablinks">File Name</button>
-            <button id="xloc_tab" class="tablinks">Xloc</button>
-            <button id="profile_tab" class="tablinks">Profile</button>
+        <!-- Setting Window Mask -->
+        <div id="mask"></div>
+
+        <!-- Tabs -->
+        <div class="tab" style="padding: 4px 10px 4px 25px; margin-top: 0;">
+            <button id="new_bug_tab" class="tablinks">Bug template</button>
+            <button id="file_naming_tab" class="tablinks">File name</button>
+            <button id="xloc_tab" class="tablinks" style="margin-left: 5%;">Xloc</button>
         </div>
         
         <!-- Tab content -->
         <div id="new_bug" class="tabcontent">
-            <div class="divider-container"><div class="divider"></div>&emsp;<b>Bug Info</b>&emsp;<div class="divider"></div></div>
-            <input id="summary" type="text" autocomplete="off" placeholder="Summary">
+            <div class="divider-container" style="margin-top: 0;"><div class="divider"></div>&emsp;<b>Bug info</b>&emsp;<div class="divider"></div></div>
+            <textarea id="summary" type="text" autocomplete="off" placeholder="Summary" rows="1"></textarea>
             <div class="labels">
-                <input id="found_cl" type="text" autocomplete="off" placeholder="Found CL">
-                <input id="location" type="text" autocomplete="off" placeholder="Location">
-                <div style="display: flex; justify-content: space-between;">
-                    <div style="width: 40%;">
-                        <button class="add_label selected" id="season_label" value="Season">Season</button>
-                        <input id="season_num" type="number" min="1" value="1" step=".5">
+                <input id="location" type="text" autocomplete="off" placeholder="Area">
+                <div style="position: relative;">
+                    <input id="found_cl" type="text" autocomplete="off" placeholder="Found CL">
+                    <i class="fa-solid fa-lock-open input-text-lock" id="found-cl-lock"></i>
+                </div>
+                <div style="position: relative;">
+                    <input id="fix_version" type="text" autocomplete="off" placeholder="Fix Version">
+                    <i class="fa-solid fa-lock-open input-text-lock" id="fix-version-lock"></i>
+                </div>
+                <div class="button-container">
+                    <div style="width: 50%; display: inline-block;" title="Add season label">
+                        <input class="add_label" id="season_label" type="checkbox" style="vertical-align: middle;" checked>Season
+                        <input id="season_num" type="number" min="1" value="1" step=".5" title="Edit season" style="vertical-align: middle;">
+                        <i class="fa-solid fa-lock-open" id="season-lock"></i>
                     </div>
-                    <label style="display: inline-flex; align-items: center;"> 
+                    <label style="display: inline-flex; align-items: center;" title="Create multi-language template"> 
                         <input id="multi_lng" type="checkbox" style="flex: none;"> 
                         All Languages
                     </label>
                 </div>
-                <div class="divider-container"><div class="divider"></div>&emsp;<b>Game Mode</b>&emsp;<div class="divider"></div></div>
-                <button class="add_label game_mode" id="Loc_Global" value="">Global</button> 
-                <button class="add_label game_mode" id="Loc_SP" value="Loc_SP">SP</button> 
-                <button class="add_label game_mode" id="Loc_MP" value="Loc_MP">MP</button> 
-                <button class="add_label game_mode" id="Loc_ZM" value="Loc_ZM">ZM</button> 
-                <button class="add_label game_mode" id="Loc_WZ" value="Loc_WZ">WZ</button>
-                <div class="divider-container"><div class="divider"></div>&emsp;<b>Bug Type</b>&emsp;<div class="divider"></div></div>
-                <button class="add_label issue_type_1 advanced_type" id="Loc_Text" value="Loc_Text">Text</button> 
-                <button class="add_label issue_type_1 advanced_type" id="Loc_Subtitle" value="Loc_Subtitle">Subtitle</button> 
-                <button class="add_label issue_type_1 advanced_type" id="Loc_Audio" value="Loc_Audio">Audio</button> 
-                <button class="add_label" id="Loc_UI" value="Loc_UI">UI</button> 
-                <button class="add_label" id="Loc_TRG" value="Loc_TRG">TRG</button> 
+                <div class="divider-container"><div class="divider"></div>&emsp;<b>Game mode</b>&emsp;<div class="divider"></div></div>
+                <div class="button-container">
+                    <button class="add_label game_mode" id="Loc_Global" value="">Global</button> 
+                    <button class="add_label game_mode" id="Loc_SP" value="Loc_SP">SP</button> 
+                    <button class="add_label game_mode" id="Loc_MP" value="Loc_MP">MP</button> 
+                    <button class="add_label game_mode" id="Loc_ZM" value="Loc_ZM">ZM</button> 
+                    <button class="add_label game_mode" id="Loc_WZ" value="Loc_WZ">WZ</button>
+                </div>
+                <div class="divider-container"><div class="divider"></div>&emsp;<b>Bug type</b>&emsp;<div class="divider"></div></div>
+                <div class="button-container">
+                    <button class="add_label issue_type_1 advanced_type" id="Loc_Text" value="Loc_Text">Text</button> 
+                    <button class="add_label issue_type_1 advanced_type" id="Loc_Subtitle" value="Loc_Subtitle">Subtitle</button> 
+                    <button class="add_label issue_type_1 advanced_type" id="Loc_Audio" value="Loc_Audio">Audio</button> 
+                    <button class="add_label" id="Loc_UI" value="Loc_UI">UI</button> 
+                    <button class="add_label" id="Loc_TRG" value="Loc_TRG">TRG</button> 
+                </div>
                 <button class="add_label" id="Loc_Glossary" value="Loc_Glossary">Glossary</button> 
                 <button class="add_label advanced_type" id="Loc_Telescope" value="Loc_Telescope">Telescope</button>
                 <div class="specific_label text_specific" style="display: none;">
-                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Text Issue Type</b>&emsp;<div class="divider"></div></div>
-                    <button class="add_label issue_type_2" id="Loc_Text_Amendment" value="Loc_Text_Amendment">Amendment</button> 
-                    <button class="add_label issue_type_2" id="Loc_Text_Overlap" value="Loc_Text_Overlap">Overlap</button>
-                    <button class="add_label issue_type_2" id="Loc_Text_Consistency" value="Loc_Text_Consistency">Consistency</button> 
-                    <button class="add_label issue_type_2" id="Loc_Text_Context" value="Loc_Text_Context">Context</button>
-                    <button class="add_label issue_type_2" id="Loc_Text_Truncation" value="Loc_Text_Truncation">Truncation</button> 
-                    <button class="add_label issue_type_2" id="Loc_Text_Font_Size" value="Loc_Text_Font_Size">Font Size</button>
-                    <button class="add_label issue_type_2" id="Loc_Text_Alignment" value="Loc_Text_Alignment">Alignment</button> 
-                    <button class="add_label issue_type_2" id="Loc_Text_Graphic" value="Loc_Text_Graphic">Graphic</button>
-                    <button class="add_label issue_type_2" id="Loc_Text_Not_Translated" value="Loc_Text_Not_Translated">Not Translated</button> 
-                    <button class="add_label issue_type_2" id="Loc_Text_Integration" value="Loc_Text_Integration">Integration</button>
-                    <button class="add_label issue_type_2" id="Loc_Text_Spelling_Grammar" value="Loc_Text_Spelling_Grammar">Spelling Grammar</button> 
-                    <button class="add_label issue_type_2" id="Loc_Text_Missing" value="Loc_Text_Missing">Missing</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Text issue type</b>&emsp;<div class="divider"></div></div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Text_Amendment" value="Loc_Text_Amendment">Amendment</button> 
+                        <button class="add_label issue_type_2" id="Loc_Text_Overlap" value="Loc_Text_Overlap">Overlap</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Consistency" value="Loc_Text_Consistency">Consistency</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Text_Context" value="Loc_Text_Context">Context</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Graphic" value="Loc_Text_Graphic">Graphic</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Spelling_Grammar" value="Loc_Text_Spelling_Grammar">Spelling grammar</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Text_Alignment" value="Loc_Text_Alignment">Alignment</button> 
+                        <button class="add_label issue_type_2" id="Loc_Text_Missing" value="Loc_Text_Missing">Missing</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Not_Translated" value="Loc_Text_Not_Translated">Not translated</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Text_Integration" value="Loc_Text_Integration">Integration</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Font_Size" value="Loc_Text_Font_Size">Font size</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Truncation" value="Loc_Text_Truncation">Truncation</button> 
+                    </div>
                 </div>
                 <div class="specific_label subtitle_specific" style="display: none;">
-                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Subtitle Issue Type</b>&emsp;<div class="divider"></div></div>
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Amendment" value="Loc_Subtitle_Amendment">Amendment</button> 
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Overlap" value="Loc_Subtitle_Overlap">Overlap</button>
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Consistency" value="Loc_Subtitle_Consistency">Consistency</button> 
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Context" value="Loc_Subtitle_Context">Context</button>
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Truncation" value="Loc_Subtitle_Truncation">Truncation</button> 
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Font_Size" value="Loc_Subtitle_Font_Size">Font Size</button>
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Alignment" value="Loc_Subtitle_Alignment">Alignment</button> 
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Mismatch" value="Loc_Subtitle_Mismatch">Mismatch</button>
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Integration" value="Loc_Subtitle_Integration">Integration</button> 
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Missing" value="Loc_Subtitle_Missing">Missing</button>
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Not_Translated" value="Loc_Subtitle_Not_Translated">Not Translated</button> 
-                    <button class="add_label issue_type_2" id="Loc_Subtitle_Spelling_Grammar" value="Loc_Subtitle_Spelling_Grammar">Spelling Grammar</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Subtitle issue type</b>&emsp;<div class="divider"></div></div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Amendment" value="Loc_Subtitle_Amendment">Amendment</button> 
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Overlap" value="Loc_Subtitle_Overlap">Overlap</button>
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Consistency" value="Loc_Subtitle_Consistency">Consistency</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Context" value="Loc_Subtitle_Context">Context</button>
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Missing" value="Loc_Subtitle_Missing">Missing</button>
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Spelling_Grammar" value="Loc_Subtitle_Spelling_Grammar">Spelling grammar</button>
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Alignment" value="Loc_Subtitle_Alignment">Alignment</button> 
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Mismatch" value="Loc_Subtitle_Mismatch">Mismatch</button>
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Integration" value="Loc_Subtitle_Integration">Integration</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Truncation" value="Loc_Subtitle_Truncation">Truncation</button> 
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Font_Size" value="Loc_Subtitle_Font_Size">Font size</button>
+                        <button class="add_label issue_type_2" id="Loc_Subtitle_Not_Translated" value="Loc_Subtitle_Not_Translated">Not translated</button> 
+                    </div>
                 </div>
                 <div class="specific_label audio_specific" style="display: none;">
-                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Audio Issue Type</b>&emsp;<div class="divider"></div></div>
-                    <button class="add_label issue_type_2" id="Loc_Audio_Consistency" value="Loc_Audio_Consistency">Consistency</button> 
-                    <button class="add_label issue_type_2" id="Loc_Audio_Context" value="Loc_Audio_Context">Context</button>
-                    <button class="add_label issue_type_2" id="Loc_Audio_Cut" value="Loc_Audio_Cut">Cut</button> 
-                    <button class="add_label issue_type_2" id="Loc_Audio_Missing" value="Loc_Audio_Missing">Missing</button>
-                    <button class="add_label issue_type_2" id="Loc_Audio_Not_Translated" value="Loc_Audio_Not_Translated">Not Translated</button> 
-                    <button class="add_label issue_type_2" id="Loc_Audio_Overlap" value="Loc_Audio_Overlap">Overlap</button>
-                    <button class="add_label issue_type_2" id="Loc_Audio_SFX" value="Loc_Audio_SFX">SFX</button> 
-                    <button class="add_label issue_type_2" id="Loc_Audio_Volume" value="Loc_Audio_Volume">Volume</button>
-                    <button class="add_label issue_type_2" id="Loc_Audio_Text_Integration" value="Loc_Audio_Text_Integration">Text Integration</button> 
-                    <button class="add_label issue_type_2" id="Loc_Audio_Sync" value="Loc_Audio_Sync">Sync</button>
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Audio issue type</b>&emsp;<div class="divider"></div></div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Audio_Consistency" value="Loc_Audio_Consistency">Consistency</button> 
+                        <button class="add_label issue_type_2" id="Loc_Audio_Context" value="Loc_Audio_Context">Context</button>
+                        <button class="add_label issue_type_2" id="Loc_Audio_Cut" value="Loc_Audio_Cut">Cut</button> 
+                        <button class="add_label issue_type_2" id="Loc_Audio_SFX" value="Loc_Audio_SFX">SFX</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label issue_type_2" id="Loc_Audio_Missing" value="Loc_Audio_Missing">Missing</button>
+                        <button class="add_label issue_type_2" id="Loc_Audio_Overlap" value="Loc_Audio_Overlap">Overlap</button>
+                        <button class="add_label issue_type_2" id="Loc_Audio_Volume" value="Loc_Audio_Volume">Volume</button>
+                        <button class="add_label issue_type_2" id="Loc_Audio_Sync" value="Loc_Audio_Sync">Sync</button>
+                    </div>
+                    <button class="add_label issue_type_2" id="Loc_Audio_Not_Translated" value="Loc_Audio_Not_Translated">Not translated</button> 
+                    <button class="add_label issue_type_2" id="Loc_Audio_Text_Integration" value="Loc_Audio_Text_Integration">Text integration</button>
                 </div>
                 <div class="specific_label telescope_specific" style="display: none;">
-                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Telescope Issue Type</b>&emsp;<div class="divider"></div></div>
-                    <button class="add_label" id="Loc_Telescope" value="Loc_Telescope">Loc Telescope</button> 
-                    <button class="add_label" id="Telescope" value="Telescope">Telescope</button> 
-                    <button class="add_label" id="telescope" value="telescope">telescope</button>
-                    <button class="add_label" id="CERMPLB" value="CERMPLB">CER<span style="color: DarkOrange;">MP</span>LB</button> 
-                    <button class="add_label" id="CERZMLB" value="CERZMLB">CER<span style="color: DarkOrange;">ZM</span>LB</button> 
+                    <div class="divider-container"><div class="divider"></div>&emsp;<b>Telescope issue type</b>&emsp;<div class="divider"></div></div>
+                    <div class="button-container">
+                        <button class="add_label" id="telescope" value="telescope">telescope</button>
+                        <button class="add_label" id="CEREntryS1" value="CEREntryS1">CEREntryS1</button>
+                        <button class="add_label" id="CERZMLB" value="CERZMLB">CER<span style="color: DarkOrange;">ZM</span>LB</button> 
+                    </div>
+                    <div class="button-container">
+                        <button class="add_label" id="CERMOTD" value="CERMOTD">CERMOTD</button> 
+                        <button class="add_label" id="CEREULA" value="CEREULA">CEREULA</button>
+                        <button class="add_label" id="CEREntryTEL" value="CEREntryTEL">CEREntryTEL</button> 
+                    </div> 
                     <button class="add_label" id="CERResurgLB" value="CERResurgLB">CERResurgLB</button> 
-                    <button class="add_label" id="CEREntryTEL" value="CEREntryTEL">CEREntryTEL</button> 
-                    <button class="add_label" id="CEREntryS1" value="CEREntryS1">CEREntryS1</button>
-                    <button class="add_label" id="CERMOTD" value="CERMOTD">CERMOTD</button> 
-                    <button class="add_label" id="CEREULA" value="CEREULA">CEREULA</button>
+                    <button class="add_label" id="Loc_Telescope" value="Loc_Telescope">Loc Telescope</button>
+                    <button class="add_label" id="CERMPLB" value="CERMPLB">CER<span style="color: DarkOrange;">MP</span>LB</button> 
+                    <button class="add_label" id="Telescope" value="Telescope">Telescope</button> 
                 </div>
                 <div class="divider-container"><div class="divider"></div>&emsp;<b>Safety</b>&emsp;<div class="divider"></div></div>
-                <button class="add_label safety_issue" id="Loc_X_Safe" value="">&emsp;X&emsp;</button> 
-                <button class="add_label safety_issue" id="Loc_Arabic_Safe" value="Loc_Arabic_Safe">Arabic</button> 
-                <button class="add_label safety_issue" id="Loc_German_Safe" value="Loc_German_Safe">German</button> 
-                <button class="add_label safety_issue" id="Loc_Japanese_Safe" value="Loc_Japanese_Safe">Japanese</button>
+                <div class="button-container">
+                    <button class="add_label safety_issue" id="Loc_X_Safe" value="">&emsp;X&emsp;</button> 
+                    <button class="add_label safety_issue" id="Loc_Arabic_Safe" value="Loc_Arabic_Safe">Arabic</button> 
+                    <button class="add_label safety_issue" id="Loc_German_Safe" value="Loc_German_Safe">German</button> 
+                    <button class="add_label safety_issue" id="Loc_Japanese_Safe" value="Loc_Japanese_Safe">Japanese</button>
+                </div>
             </div>
-            <textarea id="resource_ids" placeholder="Paste resource IDs here."></textarea>
-            <div style="display: flex; justify-content: center; margin-top: 8px;">
-                <button id="clear_input">CLEAR All</button>&emsp;<button id="create_bug">Create Bug</button>
-            </div>
+            <div class="divider-container"><div class="divider"></div>&emsp;<b>Source IDs</b>&emsp;<div class="divider"></div></div>
+            <textarea id="resource_ids" placeholder="Paste source IDs here."></textarea>
         </div>
 
         <div id="file_naming" class="tabcontent">
-            <label for="bug_id">Bug Number:</label>
-            <input type="text" id="bug_id" placeholder="Bug ID" value="" disabled/>
-            <label for="bug_type_1">Bug Type 1:</label>
-            <input type="text" id="bug_type_1" placeholder="Bug Type 1" value="" disabled/>
-            <label for="bug_type_2">Bug Type 2:</label>
-            <input type="text" id="bug_type_2" placeholder="Bug Type 2" value="" disabled/>
-            <label for="bug_lng_select">Language:</label>
-            <select id="bug_lng_select"></select><br>
-            <label for="release_id">Release ID:</label>
-            <input type="text" id="release_id" placeholder="Release ID" value="" style="width: 30%;"/>
-            <label style="display: inline-flex; align-items: center;"> 
-            <input id="regression_lock" type="checkbox" style="flex: none;"> 
-                Regression Lock
-            </label><br>
-            <label for="file_name">File Name:</label>
-            <div class="copy_comment">
-                <textarea id="file_name" rows="3"></textarea>
-                <button id="file_name_copy" title="Copy"><i class="fa-solid fa-copy"></i></button>
+            <label for="bug_id">Bug number<input type="text" id="bug_id" placeholder="(⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠)" value="" disabled/></label>
+            <label for="bug_lng_select">Language<select id="bug_lng_select" disabled><option value="(⁠◕⁠ᴗ⁠◕⁠✿⁠)">(⁠◕⁠ᴗ⁠◕⁠✿⁠)</option></select></label>
+            <label for="bug_type_1">Bug type<input type="text" id="bug_type_1" placeholder="ᕦ⁠(⁠ò⁠_⁠ó⁠ˇ⁠)⁠ᕤ" value="" disabled/></label>
+            <label for="bug_type_2">Issue type<input type="text" id="bug_type_2" placeholder="ლ⁠(⁠´⁠ ⁠❥⁠ ⁠`⁠ლ⁠)" value="" disabled/></label>
+            <div style="position: relative;">
+                <label for="release_id">Release ID<input type="text" id="release_id" placeholder="(⁠･ั⁠ω⁠･ั⁠)" value="" autocomplete="off"/></label>
+                <i class="fa-solid fa-lock-open input-text-lock" id="regression_lock" title="Lock this ID"></i>
             </div>
-            <div class="file_naming_button">
+            <p style="text-align: center; margin: 15px auto;">
+                <svg width="100" height="12.5">
+                    <polygon points="25, 0, 75, 0, 50, 12.5" fill="#CFCFCF" />
+                </svg>
+            </p>
+            <div class="copy_comment" style="position: relative;">
+                <textarea id="file_name" rows="3" style="word-break: break-all;"></textarea>
+                <i id="file_name_copy" class="fa-solid fa-copy" title="Copy"></i>
+            </div>
+            <div class="file_naming_button button-container">
                 <button class="postfix" id="plus_1">_1</button>
                 <button class="postfix" id="plus_2">_2</button>
                 <button class="postfix" id="plus_3">_3</button>
@@ -140,30 +181,36 @@
                 <button class="postfix" id="plus_6">_6</button>
                 <button class="postfix" id="plus_7">_7</button>
                 <button class="postfix" id="plus_8">_8</button>
+                <button class="postfix" id="plus_9">_9</button>
             </div>
         </div>
 
         <div id="xloc" class="tabcontent">
-            <button id="translation_contrast">Translation Contrast</button><Br>
-            <button id="toggle_highlight">Toggle Highlight</button>
-            <button id="clear_search">Clear Search</button>
-            <label style="display: inline-flex; align-items: center;"> 
-                <input id="light_bg" type="checkbox" style="flex: none;"> 
-                Light BG
-            </label>
-            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="2"></textarea>
-            <p id="colored_string"></p>            
+            <button id="translation_contrast">Compare translation</button>
+            <button id="toggle_highlight">Highlight color code</button><br><br>
+            <p style="text-align: center; margin-bottom: 6px;">Color code string preview</p>
+            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="3"></textarea>
+            <p style="text-align: center; margin: 5px auto;">
+                <svg width="100" height="12.5">
+                    <polygon points="25, 0, 75, 0, 50, 12.5" fill="#CFCFCF" />
+                </svg>
+            </p>
+            <p id="colored_string"></p>
+            <div class="bg-switch" style="text-align: right;">
+                <i class="fa-regular fa-circle" id="light-background" style="cursor: pointer;"></i>
+                <i class="fa-solid fa-circle" id="dark-background" style="cursor: pointer;"></i>
+            </div>
         </div>
 
-        <div id="profile" class="tabcontent">
-            <label for="theme">&emsp;&nbsp;&nbsp;Theme&emsp;&nbsp;&nbsp;</label>
-            <select id="theme" style="width: 70%;">
-                <option id="default" value="default">Default</option>
-                <option id="taco" value="taco">Taco</option>
-                <option id="cerberus" value="cerberus">Cerberus</option>
-            </select><br>
-            <label for="profile_lng">Loc Language</label>
-            <select id="profile_lng" style="width: 70%;">
+        <!-- Setting Window -->
+        <div id="setting_window" style="display: none; z-index: 1000;">
+            <div class="button-container">
+                <label for="profile_username"><b>User name</b></label>
+                <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a>
+            </div>
+            <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="margin: 0 0 10px 0;">
+            <label for="profile_lng"><b>Loc Language</b></label><br>
+            <select id="profile_lng" style="margin: 3px 0 10px 0;">
                 <option id="FR" value="FR">French</option>
                 <option id="IT" value="IT">Italian</option>
                 <option id="DE" value="DE">German</option>
@@ -178,18 +225,25 @@
                 <option id="ZHT" value="ZHT">Traditional Chinese</option>
                 <option id="JA" value="JA">Japanese</option>
             </select><br>
-            <span for="profile_username">Jira Username</span>
-            <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="width: 70%;">
-            <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a><br><br>
-            <div id="update-note" style="display: none;">
-                <b>What's New</b><br>
+            <label for="theme"><b>Theme</b></label><br>
+            <select id="theme" style="margin: 3px 0 10px 0;">
+                <option id="default" value="default">Default</option>
+                <option id="taco" value="taco">Taco</option>
+                <option id="cerberus" value="cerberus">Cerberus</option>
+            </select><br><br>
+            <div class="button-container">
+                <a id="report" href="slack://user?team=EHLH96WBS&id=U059YCTGU11" target="_blank">Report error</a>
+                <p id="version" class="tooltip"></p>
             </div>
-            <img id="cerberus_logo" class="logo" src="../data/cerberus.png" style="display: none; position: absolute; right: 0; bottom: 0; width: 30%; z-index: -1; pointer-events: none;">
+            <img id="cerberus_logo" class="logo" src="../data/cerberus.png" style="display: none; position: absolute; right: 50%; transform: translateX(50%); bottom: -10; width: 30%; z-index: -1; pointer-events: none;">
         </div>
 
-        <footer style="display: flex; justify-content: space-between;">
-            <a class="report" href="slack://user?team=EHLH96WBS&id=U059YCTGU11" target="_blank">Report Error</a>
-            <p id="version"></p>
+        <!-- Footer -->
+        <footer>
+            <i id="setting" class="fas fa-cog"></i>
+            <div id="new_bug_action_button" style="display: none;">
+                <p id="reset_all" style="margin: auto 0; cursor: pointer;">Reset all</p>&emsp;<button id="create_bug">Create template</button>
+            </div>
         </footer>
         <script src="action.js"></script>
     </body>

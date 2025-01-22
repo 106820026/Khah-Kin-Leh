@@ -61,22 +61,17 @@ fetch("../manifest.json").then(response => {
             // 只提醒一次
             if(update_request){
                 // 按確認
-                if(confirm("Latest version available! Do you want to download now?") == true) {
+                if(confirm("Latest version available! Do you want to download now?" + "\n" + update_note) == true) {
                     downloadURL(latest_file)
-                }else{ // 按取消 同時會新增一個下載的icon
-                    chrome.storage.local.set({"update_request": 0 }).then(() => {})
-                    $("#version").append(" <i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>")
                 }
-            }else{
-                $("#version").append(" <i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>")
             }
+            chrome.storage.local.set({"update_request": 0 }).then(() => {})
+            $("#version").append(" <i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>")
             $("#version>.fa-download").on("click", () => {
                 downloadURL(latest_file)
                 console.log($("#version").html())
                 $("#version").html($("#version").html().replace("<i title=\"Update Available\" class=\"fa fa-download\" style=\"cursor: pointer;\"></i>", "<i class=\"fa-solid fa-check\"></i>"))
             })
-            $("#update-note").append(update_note)
-            $("#update-note").show()
         }else{
             // 開啟下次更新
             chrome.storage.local.set({"update_request": 1 }).then(() => {})
@@ -101,10 +96,6 @@ $("#new_bug_tab").on("click", function() {
     openTab("new_bug")
     chrome.storage.local.set({"tab": "new_bug" }).then(() => {})
 })
-$("#profile_tab").on("click", function() {
-    openTab("profile")
-    chrome.storage.local.set({"tab": "profile" }).then(() => {})
-})
 // 切換tab的function
 function openTab(tabName) {
     // Declare all variables
@@ -116,30 +107,38 @@ function openTab(tabName) {
         tabcontent[i].style.display = "none";
     }
   
-    // Get all elements with class="tablinks" and remove the class "active"
+    // Get all elements with class="tablinks" and remove the class "selected"
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].className = tablinks[i].className.replace(" selected", "");
     }
   
-    // Show the current tab, and add an "active" class to the button that opened the tab
+    // Show the current tab, and add an "selected" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
-    $("#" + tabName + "_tab").addClass("active")
+    $("#" + tabName + "_tab").addClass("selected")
     // 如果打開的頁面不是New Bug tab時 無法取得#resource_ids的滾動高度(因為display:none;) 所以每切換一次就讀一次
-    $("#resource_ids").css("height", "1px") // textarea和input的預設大小是19px 看起來比較一致
-    $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 19 ? "51px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
+    $("#resource_ids").css("height", "1px") // textarea和input的預設大小是20px 看起來比較一致
+    $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 20 ? "51px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
+    $("#summary").css("height", "1px") // textarea和input的預設大小是20px 看起來比較一致
+    $("#summary").css("height", ($("#summary").prop('scrollHeight')) == 20 ? "22px" : ($("#summary").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
+    // 當選擇new bug tab才顯示相關按鈕
+    if(tabName == "new_bug") {
+        $("#new_bug_action_button").css('display', 'flex')
+    }else {
+        $("#new_bug_action_button").hide()
+    }
 }
 // 決定目前要開啟的tab
 chrome.storage.local.get("tab").then((result) => {
     if(result["tab"] != null){
         openTab(result["tab"])
     }else{
-        openTab("profile")
+        openTab("new_bug_tab")
     }
 })
 
 // footer 的report error(目前連結是我的slack profile)
-$('a.report').on('click', function(){
+$('a#report').on("click", function(){
     chrome.tabs.create({url: $(this).attr('href')})
     return false
 })
@@ -149,26 +148,19 @@ $('a.report').on('click', function(){
 /////////////////
 
 let jira_labels = ""
-let num_lock = true
+let season_lock = false, founc_cl_lock = false, fix_version_lock = false
 // 從localstorage讀Summary資料
 chrome.storage.local.get("summary").then((result) => {
     if(result["summary"] != undefined){
         $("#summary").val(result["summary"])
+        // 把textarea展開
+        $("#summary").css("height", "1px") // textarea和input的預設大小是20px 看起來比較一致
+        $("#summary").css("height", ($("#summary").prop('scrollHeight')) == 20 ? "22px" : ($("#summary").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
     }
 })
 // 當Summary有修改時 上傳localstorage
 $("#summary").on("input", function() {
     chrome.storage.local.set({"summary": $("#summary").val()})
-})
-// 從localstorage讀season資料
-chrome.storage.local.get("season_num").then((result) => {
-    if(result["season_num"] != undefined){
-        $("#season_num").val(result["season_num"])
-    }else{
-        $("#season_num").val("1")
-    }
-    jira_labels = "Loc_S" + $("#season_num").val() + " " // 預設把season label加上去
-    $("#season_num").prop('disabled', num_lock)
 })
 // 當season有修改時 上傳localstorage
 $("#season_num").change(() => {
@@ -184,6 +176,17 @@ chrome.storage.local.get("found_cl").then((result) => {
 $("#found_cl").change(() => {
     chrome.storage.local.set({"found_cl": $("#found_cl").val()})
 })
+// 從localstorage讀Found CL lock資料
+chrome.storage.local.get("found_cl_lock").then((result) => {
+    if(result["found_cl_lock"] != undefined){
+        // true->鎖上
+        if(result["found_cl_lock"]) {
+            founc_cl_lock = true
+            $("#found-cl-lock").removeClass("fa-lock-open").addClass("fa-lock")
+            $("#found_cl").prop('disabled', founc_cl_lock)
+        }
+    }
+})
 // 從localstorage讀Location資料
 chrome.storage.local.get("location").then((result) => {
     if(result["location"] != undefined){
@@ -194,13 +197,66 @@ chrome.storage.local.get("location").then((result) => {
 $("#location").change(() => {
     chrome.storage.local.set({"location": $("#location").val()})
 })
+// 從localstorage讀Fix Version資料
+chrome.storage.local.get("fix_version").then((result) => {
+    if(result["fix_version"] != undefined){
+        $("#fix_version").val(result["fix_version"])
+    }
+})
+// 當Fix Version有修改時 上傳localstorage
+$("#fix_version").change(() => {
+    chrome.storage.local.set({"fix_version": $("#fix_version").val()})
+})
+// 從localstorage讀Fix Version lock資料
+chrome.storage.local.get("fix_version_lock").then((result) => {
+    if(result["fix_version_lock"] != undefined){
+        // true->鎖上
+        if(result["fix_version_lock"]) {
+            fix_version_lock = true
+            $("#fix-version-lock").removeClass("fa-lock-open").addClass("fa-lock")
+            $("#fix_version").prop('disabled', fix_version_lock)
+        }
+    }
+})
+// 從localstorage讀season資料
+chrome.storage.local.get("season_num").then((result) => {
+    if(result["season_num"] != undefined){
+        $("#season_num").val(result["season_num"])
+    }else{
+        $("#season_num").val("1")
+    }
+    $("#season_label").prop('disabled', season_lock)
+    $("#season_num").prop('disabled', season_lock)
+})
+// 從localstorage讀season label(checkbox)資料
+chrome.storage.local.get("season_label").then((result) => {
+    if(result["season_label"] != undefined){
+        $("#season_label").prop("checked", result["season_label"])
+    }
+})
+// 當season label(checkbox)有修改時 上傳localstorage
+$("#season_label").change(() => {
+    chrome.storage.local.set({"season_label": $("#season_label").is(":checked")})
+})
+// 從localstorage讀Season lock資料
+chrome.storage.local.get("season_lock").then((result) => {
+    if(result["season_lock"] != undefined){
+        // true->鎖上
+        if(result["season_lock"]) {
+            season_lock = true
+            $("#season-lock").removeClass("fa-lock-open").addClass("fa-lock")
+            $("#season_label").prop('disabled', season_lock)
+            $("#season_num").prop('disabled', season_lock)
+        }
+    }
+})
 // 從localstorage讀Resource IDs資料
 chrome.storage.local.get("resource_ids").then((result) => {
     if(result["resource_ids"] != undefined){
         $("#resource_ids").val(result["resource_ids"])
         // 把textarea展開
-        $("#resource_ids").css("height", "1px") // textarea和input的預設大小是19px 看起來比較一致
-        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 19 ? "51px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
+        $("#resource_ids").css("height", "1px") // textarea和input的預設大小是20px 看起來比較一致
+        $("#resource_ids").css("height", ($("#resource_ids").prop('scrollHeight')) == 20 ? "51px" : ($("#resource_ids").prop('scrollHeight')) + 2 + "px") // 多+2是因為有padding
     }
 })
 // 當Resource IDs有修改時 上傳localstorage
@@ -209,7 +265,7 @@ $("#resource_ids").change(() => {
 })
 // 當All Languages有勾時 上傳localstorage
 $("#multi_lng").change(() => {
-    chrome.storage.local.set({"multi_lng": $("#multi_lng").val()})
+    chrome.storage.local.set({"multi_lng": $("#multi_lng").is(":checked")})
 })
 // 從localstorage讀All Languages打勾資料
 chrome.storage.local.get("multi_lng").then((result) => {
@@ -223,20 +279,43 @@ chrome.storage.local.get("labels").then((result) => {
         result["labels"].split(",").forEach((id) => {
             $("#" + id).addClass("selected")
         })
-        $("." + $(".add_label.advanced_type.selected").text() + "_specific").show()
-        console.log("." + $(".add_label.advanced_type.selected").text() + "_specific")
+        $(".add_label.advanced_type.selected").each(function() {
+            $("." + $(this).text() + "_specific").show()
+        })
         // 重新渲染顏色
         applyTheme($("#theme option:selected").val())
     }else{
-        clear_input()
+        reset_all()
     }
+})
+// Found cl是否鎖定
+$("#found-cl-lock").on("click", function() {
+    founc_cl_lock = !founc_cl_lock
+    console.log(founc_cl_lock)
+    founc_cl_lock ? $("#found-cl-lock").removeClass("fa-lock-open").addClass("fa-lock"):  $("#found-cl-lock").removeClass("fa-lock").addClass("fa-lock-open")
+    $("#found_cl").prop('disabled', founc_cl_lock)
+    // Found CL lock上傳localstorage
+    chrome.storage.local.set({"found_cl_lock": !$("#found-cl-lock").hasClass("fa-lock-open")})
+})
+// Fix version是否鎖定
+$("#fix-version-lock").on("click", function() {
+    fix_version_lock = !fix_version_lock
+    fix_version_lock ? $("#fix-version-lock").removeClass("fa-lock-open").addClass("fa-lock") :  $("#fix-version-lock").removeClass("fa-lock").addClass("fa-lock-open")
+    $("#fix_version").prop('disabled', fix_version_lock)
+    // Fix version lock上傳localstorage
+    chrome.storage.local.set({"fix_version_lock": !$("#fix-version-lock").hasClass("fa-lock-open")})
+})
+// Season是否鎖定
+$("#season-lock").on("click", function() {
+    season_lock = !season_lock
+    season_lock ? $("#season-lock").removeClass("fa-lock-open").addClass("fa-lock") :  $("#season-lock").removeClass("fa-lock").addClass("fa-lock-open")
+    $("#season_label").prop('disabled', season_lock)
+    $("#season_num").prop('disabled', season_lock)
+    // Season lock上傳localstorage
+    chrome.storage.local.set({"season_lock": !$("#season-lock").hasClass("fa-lock-open")})
 })
 // labels是否有被選擇
 $(".add_label").on("click", function() {
-    if($(this).text() == "Season"){
-        num_lock = !num_lock
-        $("#season_num").prop('disabled', num_lock)
-    }
     if($(this).hasClass("game_mode")) { // game mode防呆
         $(".game_mode").removeClass("selected")
         $(this).addClass("selected")
@@ -258,11 +337,11 @@ $(".add_label").on("click", function() {
     // 當label選擇時 上傳localstorage
     let labels = $('.add_label.selected').map(function () {
         return this.id;
-    }).get().join().replace("season_label,", "")
+    }).get().join()
     chrome.storage.local.set({"labels": labels})
 })
 // 打開衍伸的labels(Text, Audio, Subtitle, Telescope)
-$("button.advanced_type").on('click', function() {
+$("button.advanced_type").on("click", function() {
     $(".specific_label").hide()
     $("button.advanced_type.selected").each(function() {
         $("div." + $(this).val().split("_")[1] + "_specific").show()
@@ -271,43 +350,52 @@ $("button.advanced_type").on('click', function() {
     // 當label選擇時 上傳localstorage
     let labels = $('.add_label.selected').map(function () {
         return this.id;
-    }).get().join().replace("season_label,", "")
+    }).get().join()
     chrome.storage.local.set({"labels": labels})
 })
 // 清除所有input並更新至local storage
-function clear_input(preserve_text = false) {
+function reset_all() {
     // 清除所有欄位
     $(".add_label").removeClass("selected")
     $(".specific_label").hide()
-    $("#resource_ids").val("")
     $("#multi_lng").prop('checked', false)
+    $("#summary").val("")
+    $("#location").val("")
+    $("#resource_ids").val("")
+    chrome.storage.local.set({"summary": ""})
+    chrome.storage.local.set({"location": ""})
+    chrome.storage.local.set({"resource_ids": ""})
+    chrome.storage.local.set({"multi_lng": $("#multi_lng").is(":checked")})
     // 選擇預設選項
     $(".game_mode").first().addClass("selected")
     $(".issue_type_1").first().addClass("selected")
     $(".safety_issue").first().addClass("selected")
     $(".issue_type_2").first().addClass("selected")
     $(".specific_label").first().show()
-    chrome.storage.local.set({"resource_ids": ""})
     jira_labels = ""
-    if(!preserve_text) {
-        $("#summary").val("")
-        chrome.storage.local.set({"summary": ""})
+    //檢查有無上鎖部分
+    if($("#found-cl-lock").hasClass("fa-lock-open")) {
         $("#found_cl").val("")
         chrome.storage.local.set({"found_cl": ""})
-        $("#location").val("")
-        chrome.storage.local.set({"location": ""})
-        $("#season_label").addClass("selected")
+    }
+    if($("#fix-version-lock").hasClass("fa-lock-open")) {
+        $("#fix_version").val("")
+        chrome.storage.local.set({"fix_version": ""})
+    }
+    if($("#season-lock").hasClass("fa-lock-open")) {
+        $("#season_label").prop("checked", true)
+        chrome.storage.local.set({"season_label": "true"})
     }
     // 重新渲染顏色
     applyTheme($("#theme option:selected").val())
     // 把預設label上傳localstorage
     let labels = $('.add_label.selected').map(function () {
         return this.id;
-    }).get().join().replace("season_label,", "")
+    }).get().join()
     chrome.storage.local.set({"labels": labels})
 }
-$("#clear_input").on("click", () => {
-    clear_input()
+$("#reset_all").on("click", () => {
+    reset_all()
 })
 // 開啟new bug頁
 $("#create_bug").on("click", ()=> {
@@ -320,10 +408,15 @@ $("#create_bug").on("click", ()=> {
     let LNG = $("#multi_lng").is(":checked") ? "FIGS/RU/PL/AR/PTBR/MX/KO/ZHS/ZHT/JA" : $("#profile_lng option:selected").val()
     // 確認基本資料有填寫
     if(username == ""){
-        alert("Please Enter the username in Profile Tab and Check if the Language is Correct!")
+        alert("Please enter jira username in setting and Check if the loc language is correct!")
         return
     }
-    let area = "Global", level_query = "&customfield_10306=30237&customfield_10360=10814", priority_query = "&priority=11103", location = $("#location").val() != "" ? $("#location").val() : "Location"
+    let area = "Global", level_query = "&customfield_10306=30237&customfield_10360=10814", 
+        priority_query = "&priority=11103", location = $("#location").val() != "" ? $("#location").val() : "Location"
+    let fix_version = $("#fix_version").val().trim(), fix_version_id = {
+        "CER_Season_2": "14004", "CER_Season_2.5": "26502", "CER_Season_3": "14006", "CER_Season_3.5": "26504", "CER_Season_4": "14008",
+        "CER_Season_4.5": "26506", "CER_Season_5": "14010", "CER_Season_5.5": "26508", "CER_Season_6": "14012"
+    }
     if(jira_labels.includes("Loc_SP")){
         area = "SP"
         level_query = "&customfield_10306=12518&customfield_10306:1=16515&customfield_10360=10809"
@@ -350,6 +443,9 @@ $("#create_bug").on("click", ()=> {
     let label_query = "&labels=Loc&labels=Loc_Cerberus&labels=Loc_" + LNG + (jira_labels.length > 0 ? jira_labels.trim().split(" ").map(label => "&labels=" + label).join("") : "")
     if($("#multi_lng").is(":checked")) {
         label_query = label_query.replace("&labels=Loc_" + LNG, "")
+    }
+    if($("#season_label").is(":checked")) {
+        label_query = label_query + " &labels=Loc_S" + $("#season_num").val()
     }
     let atvi_type_query = jira_labels.includes("Audio") ? "&customfield_10364=11338" : "&customfield_10364=11351"
     let atvi_type = {
@@ -412,28 +508,37 @@ $("#create_bug").on("click", ()=> {
     "*REPRO STEPS*%0A" +
     "----%0A" +
     "1%29%20Boot up CER in " + (LNG.split("/").length == 1 ? LNG : "affected LNG") + " on PS4/PS5/PC/X1/XSX%0A" +
-    "2%29%20%0A" +
+    "2%29 " + "%28%E2%81%A0%EF%BD%A5%E2%81%A0%CF%89%E2%81%A0%EF%BD%A5%E2%81%A0%29%E2%81%A0%E3%81%A4" + "%7B%2A%7D%7Bcolor%3A%23DE350B%7DInput steps here%21%7Bcolor%7D%7B%2A%7D" + "%E2%8A%82%E2%81%A0%28%E2%81%A0%EF%BD%A5%E2%81%A0%CF%89%E2%81%A0%EF%BD%A5%E2%81%A0%29" + "%0A" +
     "3%29%20Observe the issue%0A%0A" +
     "*BUG OBSERVED*%0A" +
     "----%0A" +
-    summary_detail + "%0A%0A%5C%5C%20" +
+    summary_detail + ".%0A" + "%28%E2%81%A0%E4%BA%BA%E2%81%A0%2A%E2%81%A0%C2%B4%E2%81%A0%E2%88%80%E2%81%A0%EF%BD%80%E2%81%A0%29%E2%81%A0%EF%BD%A1%E2%81%A0%2A%EF%BE%9F%E2%81%A0%2B" + " %7B%2A%7D%7Bcolor%3A%23DE350B%7DAdd more details%21%7Bcolor%7D%7B%2A%7D" + "%E2%97%9D%E2%81%A0%28%E2%81%A0%E2%81%B0%E2%81%A0%E2%96%BF%E2%81%A0%E2%81%B0%E2%81%A0%29%E2%81%A0%E2%97%9C%E2%81%A0%0A" +
     "Please check the screenshot attached for further details.%0A%0A" +
     "*ACTION REQUIRED*%0A" +
     "----%0A" +
     action_required + "%20Thanks!%0A%0A" +
     "*RESOURCE%20ID*%0A" +
     "----%0A" + resource_ids + "%0A%0A%5C%5C%20" +
-    "keywords%3A"
-    let found_cl = $("#found_cl").val().trim().split("_")[$("#found_cl").val().trim().split("_").length - 1]
+    "keywords%3A " + "%28%E2%81%A0%E2%97%8F%E2%81%A0%E2%80%99%E2%81%A03%E2%81%A0%29%E2%81%A0" + "%7B%2A%7D%7Bcolor%3A%23DE350B%7DAdd keywords%21%7Bcolor%7D%7B%2A%7D" + "%E2%81%A0%28%E2%81%A0%CE%B5%E2%81%A0%60%E2%81%A0%E2%97%8F%E2%81%A0%29" + "%0A"
+    let branch_type = {
+        "trunk": "31905", "release": "31907", "cert": "31908", "etu": "35601"
+    }
+    let branch_found_cl = $("#found_cl").val().trim().split("_")
+    let branch = found_cl = ""
+    if(branch_found_cl.length == 2) {
+        branch = branch_type[branch_found_cl[0].toLowerCase()]
+        found_cl = branch_found_cl[1]
+    }else{
+        found_cl = branch_found_cl[0]
+    }
     let query_string_url = 
-    "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&customfield_10325=10443&customfield_10319=10416" +
-    "&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + "&description=" + description +
-    "&assignee=" + username + "&customfield_10307=" + found_cl + priority_query + label_query + level_query + "&reporter=" + username +
-    atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
+    "https://dev.activision.com/jira/secure/CreateIssueDetails!init.jspa?issuetype=10203&pid=10201&components=26600&fixVersions=" + fix_version_id[fix_version] + 
+    "&customfield_10325=10443&customfield_10319=10416&customfield_10900=12800&reporter=" + username + "&customfield_10362=11096" + "&summary=" + summary + 
+    "&description=" + description + "&assignee=" + username + "&customfield_10307=" + found_cl + "&customfield_10604=" + branch + priority_query + label_query + level_query + 
+    "&reporter=" + username + atvi_type_query + loc_lng_query + loc_type_query + "&customfield_12303=" + resource_ids
 
     // 使用Query String在新分頁開啟Log Bug頁
     chrome.tabs.create({url: query_string_url})
-    clear_input(true)
     return false
 })
 
@@ -441,28 +546,30 @@ $("#create_bug").on("click", ()=> {
 // File Naming page //
 //////////////////////
 
-// 當Release ID有修改且Regression Lock打勾時 上傳localstorage
-$("#release_id").on("input", function() {
-    if($("#regression_lock").is(":checked")){
-        chrome.storage.local.set({"release_id": $("#release_id").val()})
-    }
-})
-
-// Regression Lock打勾資訊和目前的release ID 上傳localstorage
+// Regression Lock上鎖資訊和目前的release ID 上傳localstorage
 current_release_id = ""
-$('#regression_lock').change(function() {
-    chrome.storage.local.set({"regression_lock": $("#regression_lock").is(":checked")})
-    if($("#regression_lock").is(":checked")){
+regression_lock = false
+$('#regression_lock').on("click", function() {
+    regression_lock = !regression_lock
+    chrome.storage.local.set({"regression_lock": regression_lock})
+    if(regression_lock){
         chrome.storage.local.set({"release_id": $("#release_id").val()})
+        $('#regression_lock').removeClass("fa-lock-open").addClass("fa-lock")
     }else{
         $("#release_id").val(current_release_id)
+        $('#regression_lock').removeClass("fa-lock").addClass("fa-lock-open")
     }
+    // release id是否可輸入
+    $("#release_id").prop("disabled", regression_lock)
     updateFileName()
 })
 // 取得localstorage上Regression Lock打勾資訊
 chrome.storage.local.get("regression_lock").then((result) => {
-    if(result["regression_lock"] != undefined){
-        $("#regression_lock").prop('checked', result["regression_lock"])
+    if(result["regression_lock"]){
+        regression_lock = true
+        $('#regression_lock').removeClass("fa-lock-open").addClass("fa-lock")
+        // release id是否可輸入
+        $("#release_id").prop("disabled", regression_lock)
     }
 })
 
@@ -473,11 +580,14 @@ async function read_bug_data() {
     const bug_data = await chrome.runtime.sendMessage({type: "read_bug_data"});
     if(bug_data == null){
         console.log("Cannot get bug data from service_worker.js")
+        $("#file_name").val("(⁠ ⁠ꈍ⁠ᴗ⁠ꈍ⁠) _ (⁠◕⁠ᴗ⁠◕⁠✿⁠) _ ᕦ⁠(⁠ಠ⁠_⁠ಠ⁠)⁠ᕤ _ ლ⁠(⁠´⁠ ⁠❥⁠ ⁠`⁠ლ⁠) _ (⁠･ั⁠ω⁠･ั⁠)")
     }else{
         $("#current_bug").text("Currrent bug: " + bug_data.bug_id)
         $("#bug_id").val(bug_data.bug_id)
         $("#bug_type_1").val(bug_data.bug_type_1)
         $("#bug_type_2").val(bug_data.bug_type_2)
+        $("#bug_lng_select").prop('disabled', false)
+        $("#bug_lng_select").empty()
         for(language of bug_data.language.split("/")){
             if(!full_name_lang.includes(language)){
                 for(al of language.split("")){
@@ -489,7 +599,7 @@ async function read_bug_data() {
                 $("#bug_lng_select").append("<option value=\"" + language + "\" " + selection + ">" + language + "</option>")
             }
         }
-        if($("#regression_lock").is(":checked")){
+        if(!$("#regression_lock").hasClass("fa-lock-open")){
             await chrome.storage.local.get("release_id").then((result) => {
                 if(result["release_id"] != undefined){
                     $("#release_id").val(result["release_id"])
@@ -524,9 +634,11 @@ $("#file_name_copy").on("click", async () => {
     navigator.clipboard.writeText($("#file_name").val()).then(async () => {
         console.log('Async: Copying to clipboard was successful!');
         console.log($("#file_name_copy").text)
-        $("#file_name_copy").html('<i class="fa-solid fa-check"></i> ')
+        $("#file_name_copy").removeClass("fa-copy")
+        $("#file_name_copy").addClass("fa-check")
         await new Promise(r => setTimeout(r, 1000))
-        $("#file_name_copy").html('<i class="fa-solid fa-copy"></i>')
+        $("#file_name_copy").removeClass("fa-check")
+        $("#file_name_copy").addClass("fa-copy")
     }, function(err) {
         alert('Async: Could not copy text: ', err);
     });
@@ -582,9 +694,11 @@ $("#color_code_string").on("input", function() {
     convert_to_colored_string()
 })
 // color code淺色背景
-$("#light_bg").change(function() {
-    if($("#light_bg").is(":checked")) {$("#colored_string").css("background-color", "Gold")}
-    else {$("#colored_string").css("background-color", "#333333")}
+$("#light-background").on("click", function(){
+    $("#colored_string").css("background-color", "#fff")
+})
+$("#dark-background").on("click", function(){
+    $("#colored_string").css("background-color", "#333333")
 })
 
 // 將color code轉成顏色
@@ -610,7 +724,7 @@ function convert_to_colored_string() {
     $("#colored_string").empty()
     $("#colored_string").append(color_code_string)
     // 如果沒偵測到color code 提醒一下
-    if(!color_codes.some(color_code => $("#color_code_string").val().includes(color_code))) {
+    if(!color_codes.some(color_code => $("#color_code_string").val().includes(color_code)) && $("#color_code_string").val() != "") {
         $("#colored_string").append("<br><span style='color: red; font-weight: bolder;'>No Color code detected!</span>")
     }
 }
@@ -622,13 +736,9 @@ $("#toggle_highlight").on("click", () => {
     chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
 })
 
-$("#clear_search").on("click", () => {
-    $("#color_code_string").val("")
-})
-
-/////////////////
-// Profile Tab //
-////////////////
+////////////////////
+// Setting Window //
+////////////////////
 
 chrome.storage.local.get("theme").then((result) => {
     $("#" + result["theme"]).attr('selected','selected')
@@ -654,6 +764,21 @@ $("#theme").change(() => {
 $("#check_username").on("click", function() {
     chrome.tabs.create({url: "https://dev.activision.com/jira/secure/ViewProfile.jspa"})
     return false
+})
+$("#setting").on("click", function() {
+    $("#setting_window").show()
+    $("#mask").show()
+})
+$("#setting").hover(
+    function() {
+        $(this).addClass("fa-spin")
+    }, function() {
+        $(this).removeClass( "fa-spin" )
+    }
+)
+$("#mask").on("click", function() {
+    $("#setting_window").hide()
+    $("#mask").hide()
 })
 
 // 應用佈景主題

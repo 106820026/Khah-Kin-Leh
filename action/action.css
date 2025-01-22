@@ -2,12 +2,27 @@
 * {
     font-size: .9rem;
     margin-bottom: .2rem;
-    margin-top: .1rem;
+    font-family: "Inter", serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+*:disabled {
+    background-color: #DDD !important;
+    color: black !important;
+}
+::placeholder {
+    color: #B9B9B9;
+}
+*:focus {
+    outline: none;
 }
 
 body {
     width: 320px;
+    margin: 0;
 }
+
+/* div */
 div.bind {
     display: block;
 }
@@ -30,35 +45,66 @@ div.divider-container {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin: 12px auto 8px auto;
 }
 div.divider {
     flex-grow: 1;
     height: 1px;
     background-color: #9f9f9f;
 }
+div.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+}
+div#mask {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: rgba(248, 248, 255, .9);
+    z-index: 999;
+}
 
+/* textarea */
 textarea {
     width: 100%;
     resize: none;
     overflow-y: auto;
-    max-height: 250px;
+    max-height: 220px;
     border-radius: 4px;
 }
 
+/* p */
 p {
-    margin: 0;
+    margin: auto;
 }
 p#current_bug {
     margin-bottom: 3px;
 }
+p#version {
+    font-size: .7rem;
+    margin: auto 0;
+}
 
-input {
+/* a */
+a#check_username, a#report {
+    font-size: .7rem;
+    text-decoration: none;
+    margin: auto 0;
+}
+
+/* input, select */
+input,select {
     border: 1.5px solid;
     border-radius: 4px;
     padding: 1px 3px;
 }
-input[type = text] {
+input[type = text], select {
     width: -webkit-fill-available;
+    height: 22px;
+    border: 1px solid #606060;
 }
 input[type = number] {
     width: 30%;
@@ -82,19 +128,84 @@ input[type="checkbox"]:checked:after {
     border-width: 1px;
     border-style: solid;
     content: "";
-    background-color: #131313;
+    background-color: var(--after-color, black);
 }
 
+/* list */
+ol { 
+    padding-left: 1.8em; 
+}
+
+/* button */
 button {
     border-radius: 15px;
-    border: 2px solid #ddd;
+    border: 1.5px solid #606060;
     padding: 2px 9px;
 }
 button.selected {
     background-color: #ACACAC;
 }
+button.postfix {
+    border-radius: 3px;
+    padding: 2px 5.5px;
+}
 
+/* icon */
+i#setting {
+    font-size: 1.2rem;
+    color: #494949;
+    position: absolute;
+    left: 0px;
+    line-height: 0;
+    margin-left: 5px;
+    /* vertically center the icon */
+    top: 50%; transform: translateY(-50%);
+}
+i.fa-lock.input-text-lock,
+i.fa-lock-open.input-text-lock {
+    position: absolute;
+    right: 5px;
+    bottom: 7px;
+    margin: auto;
+    cursor: pointer;
+}
+
+/* footer */
+footer {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    margin: 7px;
+    height: 30px;
+}
+
+/* tab content related */
+#file_naming label {
+    display: flex;
+    justify-content: space-between;
+}
+#file_naming label > input,
+#file_naming select {
+    width: 70%;
+}
+
+#file_naming i#file_name_copy {
+    position: absolute;
+    right: 4px;
+    bottom: 6px;
+    font-size: 1.2rem;
+    margin: auto;
+    cursor: pointer;
+}
+
+#xloc > textarea#color_code_string {
+    min-height: 51px;
+}
 #xloc > p#colored_string {
+    border: 1px solid rgb(118, 118, 118);
+    border-radius: 3px;
+    min-height: 51px;
+    word-wrap: break-word;
     font-size: large;
     color: GhostWhite !important;
     background-color: #333333;
@@ -102,24 +213,31 @@ button.selected {
 #xloc > p#colored_string > span {
     font-size: inherit;
 }
-
-ol { 
-    padding-left: 1.8em; 
+#xloc > button {
+    display: block;
+    margin: 10px auto;
+    padding: 5px 10px;
 }
 
-
+/* Setting Window */
+#setting_window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    border-radius: 15px;
+    border: 1.5px solid #606060;
+    padding: 12.5px;
+}
 
 /* Style the tab */
-.tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
+div.tab {
     background-color: #f1f1f1;
-    display: flex;
-    justify-content: center;
 }
 /* Style the buttons that are used to open the tab content */
 .tab button {
-    width: 24%;
+    width: fit-content;
     text-align: center;
     background-color: inherit;
     border: none;
@@ -129,20 +247,23 @@ ol {
     margin: 2.5px 2.5px;
     transition: 0.3s;
 }
-/* Change background color of buttons on hover */
-.tab button:hover {
-    background-color: #ddd;
-}
-/* Create an active/current tablink class */
-.tab button.active {
-    background-color: #ccc;
+.tab button.tablinks {
+    font-weight: 500;
 }
 /* Style the tab content */
 .tabcontent {
     display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-    max-height: 500px;
+    padding: 6px 9px 6px 12px;
+    min-height: 290px;
+    max-height: 290px;
     overflow-y: auto;
+    margin-right: 3px;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #d3d3d3;
+        border-radius: 3px;
+    }
 }
