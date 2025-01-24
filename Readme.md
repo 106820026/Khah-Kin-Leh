@@ -3,6 +3,9 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2025-01-23
+1. Show tooltip when user enter username in wrong format
+2. Fix first install UI error
 # 2025-01-16
 1. Auto detect branch and fill in template
 # 2025-01-05

@@ -133,7 +133,7 @@ chrome.storage.local.get("tab").then((result) => {
     if(result["tab"] != null){
         openTab(result["tab"])
     }else{
-        openTab("new_bug_tab")
+        openTab("new_bug")
     }
 })
 
@@ -740,6 +740,7 @@ $("#toggle_highlight").on("click", () => {
 // Setting Window //
 ////////////////////
 
+let usernameRE = /\S+@\S+\.\S+/;
 chrome.storage.local.get("theme").then((result) => {
     $("#" + result["theme"]).attr('selected','selected')
     // 初始化布景主題
@@ -756,6 +757,16 @@ $("#profile_lng").change(() => {
 })
 $("#profile_username").on("input", function() {
     chrome.storage.local.set({"profile_username": $("#profile_username").val()})
+    $(".profile_username").removeClass("format-error")
+})
+$("#profile_username").on("focusout", function() {
+    if(!usernameRE.test($("#profile_username").val()) && !$(".profile_username").hasClass("format-error")) {
+        $(".profile_username").addClass("format-error")
+        console.log("format error")
+    }else if(usernameRE.test($("#profile_username").val()) && $(".profile_username").hasClass("format-error")) {
+        $(".profile_username").removeClass("format-error")
+        console.log("format correct")
+    }
 })
 $("#theme").change(() => {
     chrome.storage.local.set({"theme": $("#theme option:selected").val()})

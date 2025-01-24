@@ -208,7 +208,10 @@
                 <label for="profile_username"><b>User name</b></label>
                 <a href="https://dev.activision.com/jira/secure/ViewProfile.jspa" id="check_username">Check Username</a>
             </div>
-            <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="margin: 0 0 10px 0;">
+            <div class="profile_username tooltip">
+                <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="margin: 0 0 10px 0;">
+                <span class="tooltiptext">Should be a mail format</span>
+            </div>
             <label for="profile_lng"><b>Loc Language</b></label><br>
             <select id="profile_lng" style="margin: 3px 0 10px 0;">
                 <option id="FR" value="FR">French</option>
