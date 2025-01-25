@@ -283,7 +283,7 @@ chrome.storage.local.get("labels").then((result) => {
             $("." + $(this).text() + "_specific").show()
         })
         // 重新渲染顏色
-        applyTheme($("#theme option:selected").val())
+        // applyTheme($("#theme option:selected").val())
     }else{
         reset_all()
     }
@@ -792,35 +792,32 @@ $("#mask").on("click", function() {
     $("#mask").hide()
 })
 
+let css_var = [
+    "--general-background-color"
+    , "--general-text-color"
+    , "--tab-background-color"
+    , "--decorate-text-color"
+    , "--file-naming-label-color"
+    , "--general-button-color"
+    , "--general-button-selected-color"
+    , "--general-button-border-color"
+    , "--general-button-background-color"
+    , "--general-button-selected-background-color"
+    , "--tablinks-color"
+    , "--tablinks-selected-background-color"
+    , "--checkbox-fill-color"
+]
 // 應用佈景主題
 function applyTheme(theme) {
     fetch("../data/theme_" + theme + ".json").then(response => {
         if(response.ok) {return response.json()}
     }).then(data => {
         for(key in data) {
-            let tag = key.split("=>")[0].split(":")[0]
+            let tag = key.split("=>")[0]
             let style_name = key.split("=>")[1]
             let style = data[key]
-            if(key.includes("hover")) {
-                let toggleClass = tag.split("+")[1]
-                tag = tag.split("+")[0]
-                $(tag).hover(function(){
-                    $(this).css(style_name, style[0])
-                }, function(){
-                    $(this).hasClass(toggleClass) ? $(this).css(style_name, style[0]) : $(this).css(style_name, style[1])
-                })
-            }else if(key.includes("click")) {
-                $(tag).click(function() {
-                    $(tag).css(style_name, style[1]) // 先把所有的變成沒選擇的顏色
-                    $(tag).each(function() {
-                        if($(this).hasClass("selected")) {
-                            $(this).css(style_name, style[0]) // 把有選擇的上色
-                        }
-                    })
-                })
-            }else{
-                $(tag).css(style_name, style)
-            }
+            console.log(style_name, style)
+            $(tag).css(style_name, style)
         }
     })
     // 彩蛋圖片切換

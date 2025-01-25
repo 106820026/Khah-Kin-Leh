@@ -1,4 +1,19 @@
-/* Style the body */
+:root {
+    --general-background-color: #FFF;
+    --general-text-color: #494949;
+    --tab-background-color: #DDD;
+    --decorate-text-color: #494949;
+    --file-naming-label-color: #B9B9B9;
+    --general-button-color: #494949;
+    --general-button-selected-color: #494949;
+    --general-button-border-color: #606060;
+    --general-button-background-color: #F1F1F1;
+    --general-button-selected-background-color: #ACACAC;
+    --tablinks-color: #494949;
+    --tablinks-selected-background-color: #CCC;
+    --checkbox-fill-color: #000;
+}
+/* body */
 * {
     font-size: .9rem;
     margin-bottom: .2rem;
@@ -20,6 +35,12 @@
 body {
     width: 320px;
     margin: 0;
+}
+
+/* html */
+html {
+    color: var(--general-text-color);
+    background-color: var(--general-background-color);
 }
 
 /* div */
@@ -66,6 +87,10 @@ div#mask {
     background-color: rgba(248, 248, 255, .9);
     z-index: 999;
 }
+div#setting_window {
+    color: var(--general-text-color);
+    background-color: var(--general-background-color);
+}
 
 /* textarea */
 textarea {
@@ -79,6 +104,7 @@ textarea {
 /* p */
 p {
     margin: auto;
+    color: var(--decorate-text-color);
 }
 p#current_bug {
     margin-bottom: 3px;
@@ -93,6 +119,7 @@ a#check_username, a#report {
     font-size: .7rem;
     text-decoration: none;
     margin: auto 0;
+    color: var(--general-text-color);
 }
 
 /* input, select */
@@ -125,10 +152,9 @@ input[type="checkbox"]:checked:after {
     top: -11px;
     width: 7px;
     height: 7px;
-    border-width: 1px;
-    border-style: solid;
+    border: 1px solid var(--checkbox-fill-color);
     content: "";
-    background-color: var(--after-color, black);
+    background-color: var(--checkbox-fill-color);
 }
 
 /* list */
@@ -139,11 +165,22 @@ ol {
 /* button */
 button {
     border-radius: 15px;
-    border: 1.5px solid #606060;
+    border: 1.5px solid var(--general-button-border-color);
     padding: 2px 9px;
+    color: var(--general-button-color);
+    background-color: var(--general-button-background-color);
+}
+button:hover {
+    color: var(--general-button-selected-color);
+    background-color: var(--general-button-selected-background-color);
 }
 button.selected {
-    background-color: #ACACAC;
+    color: var(--general-button-selected-color);
+    background-color: var(--general-button-selected-background-color);
+}
+button.selected:hover {
+    color: var(--general-button-selected-color);
+    background-color: var(--general-button-selected-background-color);
 }
 button.postfix {
     border-radius: 3px;
@@ -170,6 +207,28 @@ i.fa-lock-open.input-text-lock {
     cursor: pointer;
 }
 
+/* img */
+img#cerberus_logo {
+    width: 15%;
+    color: #494949;
+    position: absolute;
+    right: 0px;
+    line-height: 0;
+    margin-right: 5px;
+    /* vertically center the icon */
+    top: 50%; transform: translateY(-50%);
+}
+
+/* label */
+label {
+    color: var(--decorate-text-color);
+}
+
+/* span */
+span {
+    color: var(--decorate-text-color);
+}
+
 /* footer */
 footer {
     display: flex;
@@ -179,10 +238,55 @@ footer {
     height: 30px;
 }
 
-/* tab content related */
+/* tab */
+div.tab {
+    background-color: var(--tab-background-color);
+}
+.tab button {
+    width: fit-content;
+    text-align: center;
+    background-color: inherit;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 7px 7px;
+    margin: 2.5px 2.5px;
+    transition: 0.3s;
+}
+.tab button.tablinks {
+    font-weight: 500;
+    color: var(--tablinks-color);
+}
+.tab button.tablinks:hover {
+    color: var(--tablinks-color);
+    background-color: var(--tablinks-selected-background-color);
+}
+.tab button.tablinks.selected {
+    background-color: var(--tablinks-selected-background-color);
+}
+/* tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 9px 6px 12px;
+    min-height: 290px;
+    max-height: 290px;
+    overflow-y: auto;
+    margin-right: 3px;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #d3d3d3;
+        border-radius: 3px;
+    }
+}
+
+/* each tab content related */
 #file_naming label {
     display: flex;
     justify-content: space-between;
+    color: var(--file-naming-label-color);
 }
 #file_naming label > input,
 #file_naming select {
@@ -225,14 +329,13 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
+    background-color: var(--general-background-color);
     border-radius: 15px;
     border: 1.5px solid #606060;
     padding: 12.5px;
 }
 
 /* tooltips */
-
 .tooltip {
     position: relative;
     display: inline-block;
@@ -240,8 +343,8 @@ footer {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 120px;
-    background-color: #ddd;
-    color: #494949;
+    background-color: var(--general-text-color);
+    color: var(--general-background-color);
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
@@ -259,48 +362,11 @@ footer {
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: #ddd transparent transparent transparent;
+    border-color: var(--general-text-color) transparent transparent transparent;
 }
 .tooltip.format-error .tooltiptext {
     visibility: visible;
 }
 .tooltip.format-error #profile_username {
     border: 1px solid red;
-}
-
-/* Style the tab */
-div.tab {
-    background-color: #f1f1f1;
-}
-/* Style the buttons that are used to open the tab content */
-.tab button {
-    width: fit-content;
-    text-align: center;
-    background-color: inherit;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 7px 7px;
-    margin: 2.5px 2.5px;
-    transition: 0.3s;
-}
-.tab button.tablinks {
-    font-weight: 500;
-}
-/* Style the tab content */
-.tabcontent {
-    display: none;
-    padding: 6px 9px 6px 12px;
-    min-height: 290px;
-    max-height: 290px;
-    overflow-y: auto;
-    margin-right: 3px;
-
-    &::-webkit-scrollbar {
-        width: 5px;
-    }
-    &::-webkit-scrollbar-thumb {
-        background-color: #d3d3d3;
-        border-radius: 3px;
-    }
 }
