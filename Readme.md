@@ -4,7 +4,7 @@
 
 Copyright&copy; 2024, Ivy Ho
 # 2025-01-26
-1. Change the way apply theme
+1. Change the way applying theme
 # 2025-01-23
 1. Show tooltip when user enter username in wrong format
 2. Fix first install UI error
