@@ -1,6 +1,7 @@
 {
     "^?PALETTE_ACCENT_PRIMARY.@PrimaryAccent500_base^": "DarkSalmon",
     "^?PALETTE_ACCENT_PRIMARY.@PrimaryAccent500_Base^": "DarkSalmon",
+    "^?EVENTS.@PrimaryColor^": "DarkSalmon",
     "^?PALETTE_ACCENT_PRIMARY.@PrimaryAccent300^": "LightSalmon",
     "^?PALETTE_NEUTRALS.@Gray100^": "White",
     "^?PALETTE_ACCENT_TERTIARY.@TertiaryAccent500_Base^": "Beige",

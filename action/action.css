@@ -15,7 +15,6 @@
 }
 /* body */
 * {
-    font-size: .9rem;
     margin-bottom: .2rem;
     font-family: "Inter", serif;
     font-optical-sizing: auto;
@@ -310,7 +309,7 @@ div.tab {
     border-radius: 3px;
     min-height: 51px;
     word-wrap: break-word;
-    font-size: large;
+    font-size: 1.05rem;
     color: GhostWhite !important;
     background-color: #333333;
 }

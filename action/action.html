@@ -66,7 +66,7 @@
                     <div class="divider-container"><div class="divider"></div>&emsp;<b>Text issue type</b>&emsp;<div class="divider"></div></div>
                     <div class="button-container">
                         <button class="add_label issue_type_2" id="Loc_Text_Amendment" value="Loc_Text_Amendment">Amendment</button> 
-                        <button class="add_label issue_type_2" id="Loc_Text_Overlap" value="Loc_Text_Overlap">Overlap</button>
+                        <button class="add_label issue_type_2" id="Loc_Text_Overlap" value="Loc_Text_Overlap Loc_Overlap">Overlap</button>
                         <button class="add_label issue_type_2" id="Loc_Text_Consistency" value="Loc_Text_Consistency">Consistency</button> 
                     </div>
                     <div class="button-container">
@@ -82,7 +82,7 @@
                     <div class="button-container">
                         <button class="add_label issue_type_2" id="Loc_Text_Integration" value="Loc_Text_Integration">Integration</button>
                         <button class="add_label issue_type_2" id="Loc_Text_Font_Size" value="Loc_Text_Font_Size">Font size</button>
-                        <button class="add_label issue_type_2" id="Loc_Text_Truncation" value="Loc_Text_Truncation">Truncation</button> 
+                        <button class="add_label issue_type_2" id="Loc_Text_Truncation" value="Loc_Text_Truncation Loc_Truncation">Truncation</button> 
                     </div>
                 </div>
                 <div class="specific_label subtitle_specific" style="display: none;">
@@ -151,7 +151,7 @@
                 </div>
             </div>
             <div class="divider-container"><div class="divider"></div>&emsp;<b>Source IDs</b>&emsp;<div class="divider"></div></div>
-            <textarea id="resource_ids" placeholder="Paste source IDs here."></textarea>
+            <textarea id="resource_ids" placeholder="Paste resource IDs here."></textarea>
         </div>
 
         <div id="file_naming" class="tabcontent">
@@ -186,10 +186,10 @@
         </div>
 
         <div id="xloc" class="tabcontent">
-            <button id="translation_contrast">Compare translation</button>
-            <button id="toggle_highlight">Highlight color code</button><br><br>
+            <button id="translation_contrast" title="Compare current and previous translation">Compare translation</button>
+            <button id="toggle_highlight" title="Highlilght the corresponding color on color code">Highlight color code</button><br><br>
             <p style="text-align: center; margin-bottom: 6px;">Color code string preview</p>
-            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="3"></textarea>
+            <textarea id="color_code_string" placeholder="Paste the color code string here!" rows="3" title="Convert the string with color code into colored text"></textarea>
             <p style="text-align: center; margin: 5px auto;">
                 <svg width="100" height="12.5">
                     <polygon points="25, 0, 75, 0, 50, 12.5" fill="#CFCFCF" />
@@ -210,7 +210,7 @@
             </div>
             <div class="profile_username tooltip">
                 <input type="text" id="profile_username" placeholder="Use Username NOT Email!!!" style="margin: 0 0 10px 0;">
-                <span class="tooltiptext">Should be a mail format</span>
+                <span class="tooltiptext">Must be an email format</span>
             </div>
             <label for="profile_lng"><b>Loc Language</b></label><br>
             <select id="profile_lng" style="margin: 3px 0 10px 0;">

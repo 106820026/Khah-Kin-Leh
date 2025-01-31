@@ -3,6 +3,11 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2025-01-31
+1. Add additional label for text overlap and truncation
+2. Add tooltip for buttons and textarea for xloc tab
+3. Fix typo(source ID -> resource ID)
+4. Color code converter can convert styles other than color code
 # 2025-01-26
 1. Change the way applying theme
 # 2025-01-23

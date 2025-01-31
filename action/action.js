@@ -668,6 +668,7 @@ $(".postfix").on("click", (event) => {
 ///////////////
 let color_dict, color_codes = null
 let emoji_dict, emoji_codes = null
+let style_dict, style_codes = null
 
 // 從color_code.json讀取資料
 fetch("../data/color_code.json").then(response => {
@@ -686,7 +687,17 @@ fetch("../data/emoji_code.json").then(response => {
     emoji_dict = data
     emoji_codes = Object.keys(emoji_dict)
 }).catch(err => {
-    console.log("Error while fetching color_code.json: ", err)
+    console.log("Error while fetching emoji_code.json: ", err)
+})
+
+// 從style_code.json讀取資料
+fetch("../data/style_code.json").then(response => {
+    if(response.ok) {return response.json()}
+}).then(data => {
+    style_dict = data
+    style_codes = Object.keys(style_dict)
+}).catch(err => {
+    console.log("Error while fetching style_code.json: ", err)
 })
 
 // color code字串輸入監聽
@@ -705,14 +716,27 @@ $("#dark-background").on("click", function(){
 function convert_to_colored_string() {
     let color_code_string = $("#color_code_string").val()
     
-    // 把color code逐一檢查
-    color_codes.map(function(element) {
-        if(color_code_string.includes(element)) {
-            color_code_string = color_code_string.replaceAll(element, "</span><span style=\"color: " + color_dict[element] + "\">")
+    // 把style code逐一檢查
+    let style_regex = style_codes.join("|").replaceAll("^", "\\^").replaceAll("?", "\\?").replaceAll(".", "\\.")
+                      .replaceAll("$", "\\$").replaceAll("+", "\\+").replaceAll("#", "\\#")
+    let buffer = [], release_buffer = false
+    color_code_string.replace(new RegExp(style_regex, "g"), (element) => {
+        let replace_element = "<span style = \"" + style_dict[element] + "\">"
+        if(release_buffer) {
+            while(buffer.length > 0){
+                replace_element = buffer.pop() + replace_element
+            }
+            release_buffer = false
         }
-    })
-    color_code_string = color_code_string.replace("</span>", "") // 把第一個多加的</span>去掉
-    color_code_string = color_code_string + "</span>" // 把最後少加的</span>加回去
+        if(color_code_string.charAt(color_code_string.search(new RegExp(element.replaceAll("^", "\\^"), "g")) + element.length) != "^"){
+            release_buffer = true
+        }
+        buffer.push("</span>")
+        color_code_string = color_code_string.replace(element, replace_element)
+    })    
+    while(buffer.length > 0){// 把最後少加的</span>加回去
+        color_code_string = color_code_string + buffer.pop()
+    }
     // emoji code逐一檢查
     emoji_codes.map(function(element) {
         if(color_code_string.includes(element)) {
@@ -816,7 +840,6 @@ function applyTheme(theme) {
             let tag = key.split("=>")[0]
             let style_name = key.split("=>")[1]
             let style = data[key]
-            console.log(style_name, style)
             $(tag).css(style_name, style)
         }
     })
