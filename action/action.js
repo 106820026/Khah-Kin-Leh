@@ -752,12 +752,45 @@ function convert_to_colored_string() {
         $("#colored_string").append("<br><span style='color: red; font-weight: bolder;'>No Color code detected!</span>")
     }
 }
-$("#translation_contrast").on("click", () => {
-    chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
+// 檢查目前是否有強調(highlight) 有的話對應的按鈕要變色
+chrome.runtime.sendMessage({type: "detect_highlight", value: true}).then((result) => {
+    Object.keys(result).forEach((key) => {
+        if(result[key]) {
+            $("#" + key).addClass("selected")
+        }
+    })
+})
+// 將xlox上的翻譯與上一次翻譯做比較並強調 如果目前有強調顏色碼會先把顏色碼的強調去除
+$("#compare_translation").on("click", () => {
+    if($("#highlight_color_code").hasClass("selected")) {
+        chrome.runtime.sendMessage({type: "highlight_color_code", value: true}).then(function(result) {
+            chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
+        })
+        $("#highlight_color_code").removeClass("selected")
+        $("#compare_translation").addClass("selected")
+    }else if($("#compare_translation").hasClass("selected")){
+        chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
+        $("#compare_translation").removeClass("selected")
+    }else{
+        chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
+        $("#compare_translation").addClass("selected")
+    }
 })
 
-$("#toggle_highlight").on("click", () => {
-    chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
+// 將xloc上的顏色碼強調出來 如果目前有強調翻譯會先把翻譯的強調去除
+$("#highlight_color_code").on("click", () => {
+    if($("#compare_translation").hasClass("selected")) {
+        chrome.runtime.sendMessage({type: "highlight_translation_difference", value: true})
+        chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
+        $("#compare_translation").removeClass("selected")
+        $("#highlight_color_code").addClass("selected")
+    }else if($("#highlight_color_code").hasClass("selected")){
+        chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
+        $("#highlight_color_code").removeClass("selected")
+    }else{
+        chrome.runtime.sendMessage({type: "highlight_color_code", value: true})
+        $("#highlight_color_code").addClass("selected")
+    }
 })
 
 ////////////////////

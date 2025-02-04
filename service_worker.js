@@ -8,21 +8,23 @@ chrome.runtime.onMessage.addListener(
                 })
                 return true // 告知非同步回應
             case "read_color_code":
-                fetch("../data/color_code.json").then(response => {
-                    if(response.ok) {return response.json()}
-                }).then(data => {
-                    color_dict = data
+                asyncFetchData("../data/color_code.json").then((result) => {
+                    sendResponse(result)
                 })
-                break;
-            case "get_color_code":
-                sendResponse(color_dict)
-                break;
+                return true // 告知非同步回應
             case "highlight_color_code":
-                asyncExecuteScript(['./scripts/highlight_color_code.js'])
-                break;
+                asyncExecuteScript(['./scripts/highlight_color_code.js']).then((result) => {
+                    sendResponse(result)
+                })
+                return true // 告知非同步回應
             case "highlight_translation_difference":
                 asyncExecuteScript(['./scripts/highlight_translation_difference.js'])
-                break;
+                return true // 告知非同步回應
+            case "detect_highlight":
+                asyncExecuteScript(['./scripts/detect_highlight.js']).then((result) => {
+                    sendResponse(result)
+                })
+                return true // 告知非同步回應
             default:
                 console.error("Unrecognised message type: ", message.type);
         }
@@ -36,6 +38,13 @@ async function asyncExecuteScript(files) {
         files: files
     })
     return result[0].result
+}
+// 無法在onMessage中使用fetch 所以使用async function 原理同上
+async function asyncFetchData(path) {
+    const result = await fetch(path).then(response => {
+        if(response.ok) {return response.json()}
+    })
+    return result
 }
 
 // 取得目前tab ID

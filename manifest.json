@@ -16,7 +16,7 @@
     ],
     "content_scripts": [
         {
-            "js": ["scripts/content.js"],
+            "js": ["scripts/diff_match_patch.js", "scripts/content.js"],
             "matches": [
                 "https://dev.activision.com/jira/issues/*",
                 "https://dev.activision.com/jira/browse/*",

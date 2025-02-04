@@ -3,6 +3,11 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2025-02-05
+1. Compare translation and Highlight color code can switch smoothly now
+2. The compare translation and highlight color code button also added css color
+# 2025-02-01
+1. Separate Diff Match Patch module from highlight_translation_difference.js
 # 2025-01-31
 1. Add additional label for text overlap and truncation
 2. Add tooltip for buttons and textarea for xloc tab
