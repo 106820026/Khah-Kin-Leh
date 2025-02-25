@@ -3,6 +3,10 @@
 >**We are currently in Beta Test**
 
 Copyright&copy; 2024, Ivy Ho
+# 2025-02-25
+1. Add color code
+2. Add functional bug type in bug template
+3. Remove all space in branch and found cl
 # 2025-02-05
 1. Compare translation and Highlight color code can switch smoothly now
 2. The compare translation and highlight color code button also added css color

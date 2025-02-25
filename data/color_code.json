@@ -24,5 +24,6 @@
     "^$": "Gold",
     "^'": "Beige",
     "^+": "DarkSalmon",
-    "^#": "Ghostwhite"
+    "^#": "Ghostwhite",
+    "^-": "LightSteelBlue"
 }

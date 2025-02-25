@@ -452,7 +452,7 @@ $("#create_bug").on("click", ()=> {
         "Loc_Text_Overlap": "11352", "Loc_Text_Truncation": "11353", "Loc_Text_Missing": "11354", "Loc_Text_Context": "11355",
         "Loc_Text_Graphic": "28445", "Loc_Text_Not_Translated": "28441", "Loc_Audio_Missing": "11356", "Loc_Audio_Context": "11357",
         "Loc_Audio_Text_Integration": "11358", "Loc_Audio_Cut": "28442", "Loc_Audio_Overlap": "28443", "Loc_Audio_Not_Translated": "28444",
-        "Loc_Arabic_Safe": "28446", "Loc_German_Safe": "28446", "Loc_Japanese_Safe": "28446"
+        "Loc_Arabic_Safe": "28446", "Loc_German_Safe": "28446", "Loc_Japanese_Safe": "28446", "Loc_Functional": "11344"
     }
     Object.keys(atvi_type).forEach(type => {
         if(jira_labels.includes(type)){
@@ -478,7 +478,7 @@ $("#create_bug").on("click", ()=> {
         "Loc_Subtitle_Missing": "30501", "Loc_Subtitle_Not_Translated": "30500", "Loc_Subtitle_Spelling_Grammar": "26070", "Loc_Text_Alignment": "11419",
         "Loc_Text_Amendment": "11415", "Loc_Text_Consistency": "11414", "Loc_Text_Context": "11413", "Loc_Text_Font_Size": "11420",
         "Loc_Text_Graphic": "11418", "Loc_Text_Integration": "16205", "Loc_Text_Missing": "11410", "Loc_Text_Not_Translated": "11411",
-        "Loc_Text_Overlap": "11417", "Loc_Text_Spelling_Grammar": "11412", "Loc_Text_Truncation": "11416"
+        "Loc_Text_Overlap": "11417", "Loc_Text_Spelling_Grammar": "11412", "Loc_Text_Truncation": "11416", "Loc_Functional": "11441"
     }
     Object.keys(loc_type).forEach(type => {
         if(jira_labels.includes(type)){
@@ -489,7 +489,7 @@ $("#create_bug").on("click", ()=> {
     let summary_detail = $("#summary").val().replace("&", "%26").replace("=", "%3D")
     let issue_type_1 = $(".issue_type_1.selected").text().replace("Loc_", "").toUpperCase()
     let issue_type_2 = $(".issue_type_2.selected").text().replace($(".issue_type_1.selected").text() + "_", "").replace("_", "/").toUpperCase()
-                       
+            
     let high_priority_type_2 = ["Loc_Arabic_Safe", "Loc_German_Safe", "Loc_Japanese_Safe"]
     high_priority_type_2.forEach(type => {
         if(jira_labels.includes(type)){
@@ -497,7 +497,7 @@ $("#create_bug").on("click", ()=> {
         }
     })
     let summary = "LOC%3A%20CER%20%E2%80%93%20PS4%2FPS5%2FX1%2FXSX%2FPC%20%E2%80%93%20" + LNG + "%20%E2%80%93%20" + issue_type_1 + 
-                  "%20%E2%80%93%20" + issue_type_2 + "%20%E2%80%93%20" + area + "%2F" + location + "%20%E2%80%93%20" + summary_detail
+                  "%20%E2%80%93%20" + issue_type_2 + (issue_type_2 != "" ? "%20%E2%80%93%20": "") + area + "%2F" + location + "%20%E2%80%93%20" + summary_detail
     if(jira_labels.includes("Telescope")) {summary = summary + " [Telescope]"}
     let amend_in_xloc_type = ["Amendment", "Consistency", "Context", "Not_Translated", "Spelling_Grammar"]
     let project = jira_labels.includes("Subtitle") ? " Linebooks": ""
@@ -523,7 +523,7 @@ $("#create_bug").on("click", ()=> {
     let branch_type = {
         "trunk": "31905", "release": "31907", "cert": "31908", "etu": "35601"
     }
-    let branch_found_cl = $("#found_cl").val().trim().split("_")
+    let branch_found_cl = $("#found_cl").val().replaceAll(/\s+/g, "").split("_")
     let branch = found_cl = ""
     if(branch_found_cl.length == 2) {
         branch = branch_type[branch_found_cl[0].toLowerCase()]
